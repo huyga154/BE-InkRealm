@@ -1,15 +1,15 @@
-// db.js
 const { Pool } = require("pg");
+require('dotenv').config(); // load .env
 
 let pool;
 
 if (!global.pgPool) {
     pool = new Pool({
-        user: "avnadmin",
-        password: "AVNS_YwGi8OmQC3UcQ5LcEPf",
-        host: "pg-20c99ba4-huyga154-exe.c.aivencloud.com",
-        port: 23573,
-        database: "defaultdb",
+        user: process.env.DB_USER,
+        password: process.env.DB_PASSWORD,
+        host: process.env.DB_HOST,
+        port: parseInt(process.env.DB_PORT),
+        database: process.env.DB_NAME,
         ssl: { rejectUnauthorized: false },
     });
     global.pgPool = pool;
