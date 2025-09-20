@@ -1,6 +1,26 @@
 var express = require('express');
 var router = express.Router();
-const pool = require("../db");
+const pool = require("../../db");
+
+
+/**
+ * @swagger
+ * /test/test-db:
+ *   get:
+ *     summary: Test kết nối DB
+ *     responses:
+ *       200:
+ *         description: Thời gian hiện tại của DB
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 time:
+ *                   type: object
+ */
 
 /* ✅ API test DB */
 router.get('/test-db', async function(req, res) {
