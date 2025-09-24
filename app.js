@@ -7,6 +7,7 @@ var logger = require('morgan');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var testdbRouter = require('./routes/test/testdb');
+var storyRouter = require('./routes/novel/novel_api')
 var setupSwagger = require("./swagger");
 
 var app = express();
@@ -25,6 +26,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/test', testdbRouter);
+app.use('/novel',storyRouter);
 
 setupSwagger(app);
 

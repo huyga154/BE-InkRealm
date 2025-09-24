@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="com.obiscr.chatgpt.settings.EasyCodeState">
+    <option name="projectFiles" value="$PROJECT_DIR$/Document/DB/sql/V1_0 DB_Data.sql;E:/Coding/Express/GIT/BE-InkRealm/BE-InkRealm/Document/DB/sql/V1_0 Ink Realm DB_2025-09-20.sql;E:/Coding/Express/GIT/BE-InkRealm/BE-InkRealm/public/stylesheets/style.css;E:/Coding/Express/GIT/BE-InkRealm/BE-InkRealm/routes/story/getAllStory.js;E:/Coding/Express/GIT/BE-InkRealm/BE-InkRealm/routes/test/testdb.js;E:/Coding/Express/GIT/BE-InkRealm/BE-InkRealm/routes/index.js;E:/Coding/Express/GIT/BE-InkRealm/BE-InkRealm/routes/users.js;E:/Coding/Express/GIT/BE-InkRealm/BE-InkRealm/app.js;E:/Coding/Express/GIT/BE-InkRealm/BE-InkRealm/db.js;E:/Coding/Express/GIT/BE-InkRealm/BE-InkRealm/package-lock.json;E:/Coding/Express/GIT/BE-InkRealm/BE-InkRealm/package.json;E:/Coding/Express/GIT/BE-InkRealm/BE-InkRealm/swagger.js" />
+  </component>
+</project>
