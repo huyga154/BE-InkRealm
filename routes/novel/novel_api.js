@@ -111,4 +111,15 @@ router.post("/novelId", async (req, res) => {
     }
 });
 
+router.get("/chapter/list",async (req, res)=>{
+    try {
+        const { storyId } = req.body;
+
+
+    } catch (err) {
+        console.error("❌ Lỗi khi chapter list theo novelId:", err.message);
+        res.status(500).json({err:"Không tìm thấy danh sách truyện"})
+    }
+});
+
 module.exports = router;
