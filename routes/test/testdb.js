@@ -2,12 +2,20 @@ var express = require('express');
 var router = express.Router();
 const pool = require("../../db");
 
+/**
+ * @swagger
+ * tags:
+ *   name: Test-API
+ *   description: API dùng để test
+ */
+
 
 /**
  * @swagger
  * /test/test-db:
  *   get:
  *     summary: Test kết nối DB
+ *     tags: [Test-API]
  *     responses:
  *       200:
  *         description: Thời gian hiện tại của DB
