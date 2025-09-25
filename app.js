@@ -27,7 +27,7 @@ app.use('/test', testdbRouter);   // /api/test
 app.use('/novel', storyRouter);   // /api/novel
 
 // Swagger UI làm index mặc định
-app.use('/', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
     customCss: '.swagger-ui .topbar { display: none }'
 }));
 
