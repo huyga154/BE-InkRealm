@@ -11,9 +11,7 @@ const options = {
         },
         servers: [
             {
-                url: process.env.VERCEL_URL
-                    ? `https://${process.env.VERCEL_URL}/api` // Vercel cần prefix /api
-                    : "http://localhost:3000",
+                url: "/",
             },
         ],
     },
