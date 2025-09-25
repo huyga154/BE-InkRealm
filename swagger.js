@@ -12,7 +12,9 @@ const options = {
         },
         servers: [
             {
-                url: "http://localhost:3000", // khi chạy local
+                url: process.env.VERCEL_URL
+                    ? `https://${process.env.VERCEL_URL}`
+                    : "http://localhost:3000", // fallback khi chạy local
             },
         ],
     },
