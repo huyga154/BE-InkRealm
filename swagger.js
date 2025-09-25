@@ -12,11 +12,11 @@ const options = {
         },
         servers: [
             {
-                url: "http://localhost:3000/api", // khi chạy local
+                url: "http://localhost:3000", // khi chạy local
             },
         ],
     },
-    apis: ["./routes/*.js"], // đọc docs trong routes
+    apis: ["./routes/**/*.js"], // đọc docs trong routes
 };
 
 const swaggerSpec = swaggerJsdoc(options);
