@@ -1,46 +1,54 @@
-const express = require('express');
-const cookieParser = require('cookie-parser');
-const logger = require('morgan');
-const path = require('path');
-const swaggerUi = require('swagger-ui-express');
-const { swaggerSpec } = require('./swagger');
+const express = require("express");
+const cookieParser = require("cookie-parser");
+const logger = require("morgan");
+const path = require("path");
+const { swaggerUi, swaggerSpec } = require("./swagger");
 
 // Import routers
-const indexRouter = require('./routes/index');
-const usersRouter = require('./routes/users');
-const testdbRouter = require('./routes/test/testdb');
-const storyRouter = require('./routes/novel/novel_api');
+const indexRouter = require("./routes/index");
+const usersRouter = require("./routes/users");
+const testdbRouter = require("./routes/test/testdb");
+const storyRouter = require("./routes/novel/novel_api");
 
 const app = express();
 
 // Middleware
-app.use(logger('dev'));
+app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, "public")));
 
-// Mount routers
-app.use('/index', indexRouter);   // /api/index
-app.use('/users', usersRouter);   // /api/users
-app.use('/test', testdbRouter);   // /api/test
-app.use('/novel', storyRouter);   // /api/novel
+// Routes
+app.use("/index", indexRouter);
+app.use("/users", usersRouter);
+app.use("/test", testdbRouter);
+app.use("/novel", storyRouter);
 
-// Swagger UI làm index mặc định
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
-    customCss: '.swagger-ui .topbar { display: none }'
-}));
+// Swagger UI (truy cập ở /api/api-docs trên Vercel, /api-docs khi local)
+app.use(
+    "/api-docs",
+    swaggerUi.serve,
+    swaggerUi.setup(swaggerSpec, {
+        customCss: ".swagger-ui .topbar { display: none }",
+    })
+);
+
+// JSON spec để debug
+app.get("/api-docs.json", (req, res) => {
+    res.setHeader("Content-Type", "application/json");
+    res.send(swaggerSpec);
+});
 
 // 404 handler
-app.use((req, res, next) => {
+app.use((req, res) => {
     res.status(404).json({ error: "Not Found :3" });
 });
 
 // Error handler
 app.use((err, req, res, next) => {
     console.error(err.stack);
-    res.status(err.status || 500).json({ error: err.message + "-aaaa" });
+    res.status(err.status || 500).json({ error: err.message });
 });
 
-// Export cho Vercel
 module.exports = app;

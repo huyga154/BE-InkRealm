@@ -1,7 +1,6 @@
 const swaggerJsdoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
 
-// Swagger config
 const options = {
     definition: {
         openapi: "3.0.0",
@@ -13,12 +12,12 @@ const options = {
         servers: [
             {
                 url: process.env.VERCEL_URL
-                    ? `https://${process.env.VERCEL_URL}`
-                    : "http://localhost:3000", // fallback khi chạy local
+                    ? `https://${process.env.VERCEL_URL}/api` // Vercel cần prefix /api
+                    : "http://localhost:3000",
             },
         ],
     },
-    apis: ["./routes/**/*.js"], // đọc docs trong routes
+    apis: ["./routes/**/*.js"], // đọc docs trong folder routes
 };
 
 const swaggerSpec = swaggerJsdoc(options);
