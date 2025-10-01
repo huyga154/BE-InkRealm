@@ -8,7 +8,9 @@ const { swaggerUi, swaggerSpec } = require("./swagger");
 const indexRouter = require("./routes/index");
 const usersRouter = require("./routes/users");
 const testdbRouter = require("./routes/test/testdb");
-const storyRouter = require("./routes/novel/novel_api");
+const novelRouter = require("./routes/novel/novel_api");
+const chapterRouter = require("./routes/chapters/chapter_api")
+
 
 const app = express();
 
@@ -23,7 +25,8 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/index", indexRouter);
 app.use("/users", usersRouter);
 app.use("/test", testdbRouter);
-app.use("/novel", storyRouter);
+app.use("/novel", novelRouter);
+app.use("/chapter", chapterRouter)
 
 // Swagger UI (truy cập ở /api/api-docs trên Vercel, /api-docs khi local)
 app.use(

@@ -111,14 +111,72 @@ router.post("/novelId", async (req, res) => {
     }
 });
 
-router.get("/chapter/list",async (req, res)=>{
+/**
+ * @swagger
+ * /novel/create:
+ *   post:
+ *     summary: Tạo mới một truyện (novel_info)
+ *     tags:
+ *       - Novels
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               novelTitle:
+ *                 type: string
+ *                 example: "Quỷ Bí Chi Chủ"
+ *               novelDescription:
+ *                 type: string
+ *                 example: "Mô tả về truyện..."
+ *               author:
+ *                 type: string
+ *                 example: "Mực Thích Lặn Nước"
+ *     responses:
+ *       200:
+ *         description: Novel được tạo thành công
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 novelId:
+ *                   type: integer
+ *                 novelTitle:
+ *                   type: string
+ *                 novelDescription:
+ *                   type: string
+ *                 author:
+ *                   type: string
+ *       400:
+ *         description: Thiếu trường thông tin bắt buộc
+ *       500:
+ *         description: Lỗi server
+ */
+router.post("/create", async (req, res) => {
     try {
-        const { storyId } = req.body;
+        const { novelTitle, novelDescription, author } = req.body;
 
+        if (!novelTitle || !author) {
+            return res.status(400).json({ error: "Thiếu novelTitle hoặc author" });
+        }
 
+        const result = await pool.query(
+            `INSERT INTO novel_info ("novelTitle", "novelDescription", "author")
+             VALUES ($1, $2, $3)
+                 RETURNING "novelId", "novelTitle", "novelDescription", "author", "createDate"`,
+            [novelTitle, novelDescription || "", author]
+        );
+
+        res.json(result.rows[0]);
     } catch (err) {
-        console.error("❌ Lỗi khi chapter list theo novelId:", err.message);
-        res.status(500).json({err:"Không tìm thấy danh sách truyện"})
+        console.error("❌ Lỗi khi tạo novel:", err.message);
+        if (err.code === "23505") { // lỗi duplicate key
+            return res.status(400).json({ error: "Truyện đã tồn tại" });
+        }
+        res.status(500).json({ error: "Lỗi server" });
     }
 });
 
