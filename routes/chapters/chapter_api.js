@@ -22,6 +22,7 @@ const pool = require("../../db");
  *         required: true
  *         schema:
  *           type: integer
+ *           example: 1
  *         description: ID của novel
  *     responses:
  *       200:
@@ -37,7 +38,7 @@ const pool = require("../../db");
  *                     type: integer
  *                   chapterTitle:
  *                     type: string
- *                   index:
+ *                   chapterIndex:
  *                     type: number
  *                   createDate:
  *                     type: string
@@ -50,20 +51,19 @@ const pool = require("../../db");
  *       500:
  *         description: Lỗi server
  */
-// Lấy danh sách chapter theo novelId
-router.get("/chapter/list/", async (req, res) => {
+router.get("/list", async (req, res) => {
     try {
-        const { novelId } = req.body; // lấy từ URL param
+        const { novelId } = req.query; // lấy từ query param ?novelId=1
 
         if (!novelId) {
-            return res.status(400).json({ error: "Thiếu novelId trong request" });
+            return res.status(400).json({ error: "Thiếu novelId trong query" });
         }
 
         const result = await pool.query(
-            `SELECT "chapterId", "chapterTitle", "index", "createDate", "updateDate"
+            `SELECT "chapterId", "chapterTitle", "chapterIndex", "createDate", "updateDate"
              FROM chapter
              WHERE "novelId" = $1
-             ORDER BY "index" ASC`,
+             ORDER BY "chapterIndex" ASC`,
             [novelId]
         );
 
@@ -73,6 +73,7 @@ router.get("/chapter/list/", async (req, res) => {
         res.status(500).json({ error: "Không tìm thấy danh sách chapter" });
     }
 });
+
 
 /**
  * @swagger
@@ -150,5 +151,169 @@ router.post("/add", async (req, res) => {
         res.status(500).json({ error: "Không thể thêm chapter mới" });
     }
 });
+
+/**
+ * @swagger
+ * /chapter/text:
+ *   get:
+ *     summary: Lấy nội dung text của một chapter
+ *     tags: [Chapter]
+ *     parameters:
+ *       - in: query
+ *         name: chapterId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           example: 1188
+ *         description: ID của chapter cần lấy
+ *     responses:
+ *       200:
+ *         description: Trả về nội dung của chapter
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 chapterText:
+ *                   type: string
+ *                   description: Nội dung chương
+ *                   example: "Ngày xửa ngày xưa..."
+ *       400:
+ *         description: Thiếu chapterId
+ *       404:
+ *         description: Không tìm thấy chapter
+ *       500:
+ *         description: Lỗi server
+ */
+router.get("/text", async (req, res) => {
+    try {
+        const { chapterId } = req.query;
+
+        if (!chapterId) {
+            return res.status(400).json({ error: "Thiếu chapterId" });
+        }
+
+        const result = await pool.query(
+            `SELECT "chapterText"
+             FROM "chapter"
+             WHERE "chapterId" = $1`,
+            [chapterId]
+        );
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ error: "Không tìm thấy chapter" });
+        }
+
+        res.json(result.rows[0]); // trả về 1 object thay vì mảng
+    } catch (err) {
+        console.error("❌ Lỗi khi lấy data chapter:", err.message);
+        res.status(500).json({ error: "Không thể lấy text của chapter" });
+    }
+});
+
+/**
+ * @swagger
+ * /chapter/detail:
+ *   get:
+ *     summary: Lấy chi tiết một chapter theo chapterId, kèm chapter trước và sau (chỉ chapterId)
+ *     tags: [Chapter]
+ *     parameters:
+ *       - in: query
+ *         name: chapterId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           example: 1188
+ *         description: ID của chapter cần lấy
+ *     responses:
+ *       200:
+ *         description: Thông tin chi tiết chapter và pre/next
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 chapterId:
+ *                   type: integer
+ *                 chapterTitle:
+ *                   type: string
+ *                 chapterIndex:
+ *                   type: number
+ *                 pre:
+ *                   type: object
+ *                   nullable: true
+ *                   properties:
+ *                     chapterId:
+ *                       type: integer
+ *                 next:
+ *                   type: object
+ *                   nullable: true
+ *                   properties:
+ *                     chapterId:
+ *                       type: integer
+ *       400:
+ *         description: Thiếu chapterId
+ *       404:
+ *         description: Không tìm thấy chapter
+ *       500:
+ *         description: Lỗi server
+ */
+router.get("/detail", async (req, res) => {
+    try {
+        const { chapterId } = req.query;
+
+        if (!chapterId) {
+            return res.status(400).json({ error: "Thiếu chapterId" });
+        }
+
+        // Lấy thông tin chapter hiện tại
+        const current = await pool.query(
+            `SELECT "chapterId", "chapterTitle", "chapterIndex", "novelId"
+             FROM "chapter"
+             WHERE "chapterId" = $1`,
+            [chapterId]
+        );
+
+        if (current.rows.length === 0) {
+            return res.status(404).json({ error: "Không tìm thấy chapter" });
+        }
+
+        const chapter = current.rows[0];
+
+        // Chương trước trong cùng novel
+        const pre = await pool.query(
+            `SELECT "chapterId"
+             FROM "chapter"
+             WHERE "novelId" = $1
+             AND "chapterIndex" < $2
+             ORDER BY "chapterIndex" DESC
+             LIMIT 1`,
+            [chapter.novelId, chapter.chapterIndex]
+        );
+
+        // Chương sau trong cùng novel
+        const next = await pool.query(
+            `SELECT "chapterId"
+             FROM "chapter"
+             WHERE "novelId" = $1
+             AND "chapterIndex" > $2
+             ORDER BY "chapterIndex" ASC
+             LIMIT 1`,
+            [chapter.novelId, chapter.chapterIndex]
+        );
+
+        res.json({
+            chapterId: chapter.chapterId,
+            chapterTitle: chapter.chapterTitle,
+            chapterIndex: chapter.chapterIndex,
+            pre: pre.rows[0] || null,
+            next: next.rows[0] || null
+        });
+    } catch (err) {
+        console.error("❌ Lỗi khi lấy chi tiết chapter:", err.message);
+        res.status(500).json({ error: "Không thể lấy chi tiết chapter" });
+    }
+});
+
 
 module.exports = router;

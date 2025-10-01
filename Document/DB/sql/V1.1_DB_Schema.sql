@@ -82,3 +82,12 @@ CREATE TABLE "novel_genre" (
                                CONSTRAINT fk_novel_genre_novel FOREIGN KEY("novelId") REFERENCES "novel_info"("novelId") ON DELETE CASCADE,
                                CONSTRAINT fk_novel_genre_genre FOREIGN KEY("genreId") REFERENCES "genre"("genreId") ON DELETE CASCADE
 );
+
+-- Index cho novelId (lọc theo tiểu thuyết)
+CREATE INDEX idx_chapter_novelId ON "chapter"("novelId");
+
+-- Index cho chapterIndex (sắp xếp chương)
+CREATE INDEX idx_chapter_chapterIndex ON "chapter"("chapterIndex");
+
+-- Composite index để tối ưu query: WHERE novelId = ? ORDER BY chapterIndex
+CREATE INDEX idx_chapter_novel_chapterIndex ON "chapter"("novelId", "chapterIndex");
