@@ -42,7 +42,8 @@ exports.register = async (req, res) => {
         // Tạo tài khoản mới
         const result = await pool.query(
             `INSERT INTO "account" ("username", "password", "fullName", "avatar" , "email") 
-       VALUES ($1, $2, $3, $4, $5) RETURNING "accountId", "username", "fullName", "avatar","email"`,
+            VALUES ($1, $2, $3, $4, $5)
+            RETURNING "accountId", "username", "fullName", "avatar","email"`,
             [username, hashedPassword, fullName || null, avatar || "" , email]
         );
 
@@ -56,7 +57,7 @@ exports.register = async (req, res) => {
         });
     } catch (err) {
         console.error(err);
-        res.status(500).json({ message: "Lỗi server" });
+        res.status(500).json({ message: "Lỗi server : " + err  });
     }
 };
 
