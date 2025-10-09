@@ -14,6 +14,15 @@ const options = {
                 url: "/",
             },
         ],
+        components: {
+            securitySchemes: {
+                bearerAuth: {
+                    type: "http",
+                    scheme: "bearer",
+                    bearerFormat: "JWT",
+                },
+            },
+        },
     },
     apis: ["./routes/**/*.js"], // đọc docs trong folder routes
 };

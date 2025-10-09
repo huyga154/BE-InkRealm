@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
-const pool = require("../../db");
+const pool = require("../../../db");
+const { verifyToken } = require("../../middleware/authMiddleware");
 
 /**
  * @swagger
@@ -156,19 +157,21 @@ router.post("/add", async (req, res) => {
  * @swagger
  * /chapter/text:
  *   get:
- *     summary: Lấy nội dung text của một chapter
+ *     summary: Lấy nội dung chương (có kiểm tra quyền truy cập)
  *     tags: [Chapter]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: query
  *         name: chapterId
- *         required: true
  *         schema:
  *           type: integer
  *           example: 1188
- *         description: ID của chapter cần lấy
+ *         required: true
+ *         description: ID của chương cần lấy nội dung
  *     responses:
  *       200:
- *         description: Trả về nội dung của chapter
+ *         description: Trả về nội dung chương (nếu được phép đọc)
  *         content:
  *           application/json:
  *             schema:
@@ -176,35 +179,91 @@ router.post("/add", async (req, res) => {
  *               properties:
  *                 chapterText:
  *                   type: string
- *                   description: Nội dung chương
- *                   example: "Ngày xửa ngày xưa..."
+ *                   example: "Đây là nội dung chương 1..."
  *       400:
  *         description: Thiếu chapterId
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Thiếu chapterId"
+ *       403:
+ *         description: Chương cần mua để đọc
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Chương này cần mua để đọc"
+ *                 price:
+ *                   type: integer
+ *                   example: 10
  *       404:
- *         description: Không tìm thấy chapter
+ *         description: Không tìm thấy chương
  *       500:
  *         description: Lỗi server
  */
-router.get("/text", async (req, res) => {
+router.get("/text", verifyToken, async (req, res) => {
     try {
         const { chapterId } = req.query;
+        const accountId = req.user.id; // lấy từ token
 
         if (!chapterId) {
             return res.status(400).json({ error: "Thiếu chapterId" });
         }
 
-        const result = await pool.query(
-            `SELECT "chapterText"
-             FROM "chapter"
-             WHERE "chapterId" = $1`,
+        // 1️⃣ Lấy thông tin chương (bao gồm price và novelId)
+        const chapterResult = await pool.query(
+            `SELECT "chapterId", "novelId", "chapterText", "price"
+            FROM "chapter"
+            WHERE "chapterId" = $1`,
             [chapterId]
         );
 
-        if (result.rows.length === 0) {
+        if (chapterResult.rows.length === 0) {
             return res.status(404).json({ error: "Không tìm thấy chapter" });
         }
 
-        res.json(result.rows[0]); // trả về 1 object thay vì mảng
+        const chapter = chapterResult.rows[0];
+
+        // 2️⃣ Nếu miễn phí → cho đọc luôn
+        if (chapter.price === 0) {
+            return res.json({ chapterText: chapter.chapterText });
+        }
+
+        // 3️⃣ Kiểm tra user đã mua chương hoặc mua truyện chưa
+        const [purchaseChapter, purchaseNovel] = await Promise.all([
+            pool.query(
+                `SELECT 1 FROM "chapter_purchase"
+         WHERE "accountId" = $1 AND "chapterId" = $2`,
+                [accountId, chapterId]
+            ),
+            pool.query(
+                `SELECT 1 FROM "novel_purchase"
+         WHERE "accountId" = $1 AND "novelId" = $2`,
+                [accountId, chapter.novelId]
+            ),
+        ]);
+
+        const hasPurchasedChapter = purchaseChapter.rows.length > 0;
+        const hasPurchasedNovel = purchaseNovel.rows.length > 0;
+
+        // 4️⃣ Nếu đã mua → cho đọc
+        if (hasPurchasedChapter || hasPurchasedNovel) {
+            return res.json({ chapterText: chapter.chapterText });
+        }
+
+        // 5️⃣ Nếu chưa mua → trả về thông báo và giá
+        return res.status(403).json({
+            error: "Chương này cần mua để đọc",
+            price: chapter.price,
+        });
+
     } catch (err) {
         console.error("❌ Lỗi khi lấy data chapter:", err.message);
         res.status(500).json({ error: "Không thể lấy text của chapter" });
@@ -314,6 +373,5 @@ router.get("/detail", async (req, res) => {
         res.status(500).json({ error: "Không thể lấy chi tiết chapter" });
     }
 });
-
 
 module.exports = router;

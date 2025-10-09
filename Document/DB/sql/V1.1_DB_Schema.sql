@@ -91,3 +91,68 @@ CREATE INDEX idx_chapter_chapterIndex ON "chapter"("chapterIndex");
 
 -- Composite index để tối ưu query: WHERE novelId = ? ORDER BY chapterIndex
 CREATE INDEX idx_chapter_novel_chapterIndex ON "chapter"("novelId", "chapterIndex");
+
+----------------------------------------------
+-- =========================================
+-- 🧩 1. Thêm cột "price" vào bảng chapter
+-- =========================================
+ALTER TABLE "chapter"
+    ADD COLUMN IF NOT EXISTS "price" INTEGER DEFAULT 0 CHECK ("price" >= 0);
+
+-- =========================================
+-- 💰 2. Bảng lưu thông tin mua chương
+-- =========================================
+CREATE TABLE IF NOT EXISTS "chapter_purchase" (
+                                                  "accountId" INTEGER NOT NULL,
+                                                  "chapterId" INTEGER NOT NULL,
+                                                  "purchaseDate" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                                                  "transactionId" INTEGER,
+                                                  PRIMARY KEY ("accountId", "chapterId"),
+                                                  CONSTRAINT fk_cp_account FOREIGN KEY("accountId") REFERENCES "account"("accountId") ON DELETE CASCADE,
+                                                  CONSTRAINT fk_cp_chapter FOREIGN KEY("chapterId") REFERENCES "chapter"("chapterId") ON DELETE CASCADE,
+                                                  CONSTRAINT fk_cp_transaction FOREIGN KEY("transactionId") REFERENCES "transaction_history"("transactionId") ON DELETE SET NULL
+);
+
+-- =========================================
+-- 📚 3. Bảng lưu thông tin mua trọn bộ truyện
+-- =========================================
+CREATE TABLE IF NOT EXISTS "novel_purchase" (
+                                                "accountId" INTEGER NOT NULL,
+                                                "novelId" INTEGER NOT NULL,
+                                                "purchaseDate" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                                                "transactionId" INTEGER,
+                                                PRIMARY KEY ("accountId", "novelId"),
+                                                CONSTRAINT fk_np_account FOREIGN KEY("accountId") REFERENCES "account"("accountId") ON DELETE CASCADE,
+                                                CONSTRAINT fk_np_novel FOREIGN KEY("novelId") REFERENCES "novel_info"("novelId") ON DELETE CASCADE,
+                                                CONSTRAINT fk_np_transaction FOREIGN KEY("transactionId") REFERENCES "transaction_history"("transactionId") ON DELETE SET NULL
+);
+
+-- =========================================
+-- ⚡ 4. Index tối ưu hóa truy vấn
+-- =========================================
+
+-- Index để truy vấn nhanh người mua chương
+CREATE INDEX IF NOT EXISTS idx_chapter_purchase_account
+    ON "chapter_purchase"("accountId");
+
+CREATE INDEX IF NOT EXISTS idx_chapter_purchase_chapter
+    ON "chapter_purchase"("chapterId");
+
+-- Index để truy vấn nhanh người mua truyện
+CREATE INDEX IF NOT EXISTS idx_novel_purchase_account
+    ON "novel_purchase"("accountId");
+
+CREATE INDEX IF NOT EXISTS idx_novel_purchase_novel
+    ON "novel_purchase"("novelId");
+
+-- =========================================
+-- ✏️ Thêm cột "accountId" (người đăng truyện)
+-- =========================================
+ALTER TABLE "novel_info"
+    ADD COLUMN IF NOT EXISTS "accountId" INTEGER,
+    ADD CONSTRAINT fk_novelinfo_account FOREIGN KEY ("accountId")
+        REFERENCES "account" ("accountId")
+        ON DELETE SET NULL;
+
+ALTER TABLE account
+    ADD COLUMN email VARCHAR(255);

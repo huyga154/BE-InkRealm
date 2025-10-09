@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
-const pool = require("../../db");
+const pool = require("../../../db");
+const { verifyToken } = require("../../middleware/authMiddleware");
 
 /**
  * @swagger
@@ -115,69 +116,65 @@ router.post("/novelId", async (req, res) => {
  * @swagger
  * /novel/create:
  *   post:
- *     summary: Tạo mới một truyện (novel_info)
- *     tags:
- *       - Novels
+ *     summary: Tạo mới novel (yêu cầu đăng nhập)
+ *     tags: [Novels]
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - novelTitle
+ *               - author
  *             properties:
  *               novelTitle:
  *                 type: string
- *                 example: "Quỷ Bí Chi Chủ"
+ *                 example: "Dị giới phiêu lưu ký"
  *               novelDescription:
  *                 type: string
- *                 example: "Mô tả về truyện..."
+ *                 example: "Truyện kể về hành trình..."
  *               author:
  *                 type: string
- *                 example: "Mực Thích Lặn Nước"
+ *                 example: "Nguyễn Văn A"
  *     responses:
  *       200:
- *         description: Novel được tạo thành công
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 novelId:
- *                   type: integer
- *                 novelTitle:
- *                   type: string
- *                 novelDescription:
- *                   type: string
- *                 author:
- *                   type: string
+ *         description: Truyện được tạo thành công
  *       400:
- *         description: Thiếu trường thông tin bắt buộc
+ *         description: Thiếu dữ liệu hoặc truyện đã tồn tại
+ *       401:
+ *         description: Token không hợp lệ hoặc chưa đăng nhập
  *       500:
  *         description: Lỗi server
  */
-router.post("/create", async (req, res) => {
+
+router.post("/create", verifyToken, async (req, res) => {
     try {
         const { novelTitle, novelDescription, author } = req.body;
+        const accountId = req.user.id; // lấy từ token
 
         if (!novelTitle || !author) {
             return res.status(400).json({ error: "Thiếu novelTitle hoặc author" });
         }
 
         const result = await pool.query(
-            `INSERT INTO novel_info ("novelTitle", "novelDescription", "author")
-             VALUES ($1, $2, $3)
-                 RETURNING "novelId", "novelTitle", "novelDescription", "author", "createDate"`,
-            [novelTitle, novelDescription || "", author]
+            `INSERT INTO novel_info ("novelTitle", "novelDescription", "author", "accountId")
+       VALUES ($1, $2, $3, $4)
+       RETURNING "novelId", "novelTitle", "novelDescription", "author", "accountId", "createDate"`,
+            [novelTitle, novelDescription || "", author, accountId]
         );
 
         res.json(result.rows[0]);
     } catch (err) {
         console.error("❌ Lỗi khi tạo novel:", err.message);
-        if (err.code === "23505") { // lỗi duplicate key
+        if (err.code === "23505") {
             return res.status(400).json({ error: "Truyện đã tồn tại" });
         }
         res.status(500).json({ error: "Lỗi server" });
     }
 });
+
 
 module.exports = router;
