@@ -12,9 +12,11 @@ const novelRouter = require("./routes/path/novel/novel_api");
 const chapterRouter = require("./routes/path/chapters/chapter_api")
 const authRouter = require("./routes/path/auth/auth_api");
 
-
+const corsMiddleware = require("./routes/config/corsConfig");
 
 const app = express();
+
+app.use(corsMiddleware);
 
 // Middleware
 app.use(logger("dev"));
