@@ -3,6 +3,7 @@ const cors = require("cors");
 require("dotenv").config();
 
 const allowedOrigins = [
+    process.env.BACKEND_URL,
     process.env.FRONTEND_URL, // ✅ Vercel FE
     "http://localhost:5173",  // ✅ React local dev
     "http://localhost:3000"   // ✅ fallback cho dev khác
