@@ -9,7 +9,7 @@ const router = express.Router();
  * @swagger
  * /payment/webhook:
  *   post:
- *     summary: Webhook nhận thông tin thanh toán từ PayOS - Ver 1.1
+ *     summary: Webhook nhận thông tin thanh toán từ PayOS - Ver 1.2
  *     description: |
  *       PayOS sẽ gọi endpoint này khi người dùng thanh toán thành công.
  *       Hệ thống xác thực chữ ký (signature), sau đó cộng coin cho tài khoản đích và ghi lịch sử giao dịch.
@@ -103,7 +103,7 @@ router.post("/webhook", async (req, res) => {
         const sortedDataByKey = sortObjDataByKey(data);
         const dataQueryStr = convertObjToQueryStr(sortedDataByKey);
         const computedSignature = crypto
-            .createHmac("sha256", process.env.PAYOS_CHECKSUM_KEY)
+            .createHmac("sha256", process.env.CASSO_CHECKSUM_KEY)
             .update(dataQueryStr)
             .digest("hex");
 
