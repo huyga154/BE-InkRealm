@@ -9,7 +9,7 @@ const router = express.Router();
  * @swagger
  * /payment/casso/webhook:
  *   post:
- *     summary: Webhook nhận thông tin giao dịch từ Casso
+ *     summary: Webhook nhận thông tin giao dịch từ Casso - V1.1
  *     description: |
  *       Casso sẽ gọi endpoint này khi có giao dịch nạp/rút tiền.
  *       Hệ thống xác thực chữ ký (signature), cộng coin cho tài khoản và ghi lịch sử giao dịch.
