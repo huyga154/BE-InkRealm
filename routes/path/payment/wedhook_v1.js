@@ -22,21 +22,21 @@ function verifyWebhookSignature(headers, data, checksumKey) {
     const receivedSignature = headers["x-casso-signature"];
     if (!receivedSignature) return false;
 
-    const match = receivedSignature.match(/t=(\d+),v1=([a-f0-9]+)/);
+    const match = receivedSignature.match(/t=(\d+),v1=([a-f0-9]+)/i); // i: ignore case
     if (!match) return false;
 
     const timestamp = match[1];
     const signature = match[2];
 
-    const sortedData = sortObjDataByKey(data);
-    const messageToSign = `${timestamp}.${JSON.stringify(sortedData)}`;
+    // GHI CHÚ: không sort key, giữ nguyên data
+    const messageToSign = `${timestamp}.${JSON.stringify(data)}`;
 
     const generatedSignature = crypto
         .createHmac("sha512", checksumKey)
         .update(messageToSign)
         .digest("hex");
 
-    return signature === generatedSignature;
+    return signature.toLowerCase() === generatedSignature.toLowerCase();
 }
 
 /**
