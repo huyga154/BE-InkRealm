@@ -37,7 +37,14 @@ const jwt = require("jsonwebtoken");
 /* ✅ API test DB */
 router.post('/test-db', async function(req, res) {
     try {
+        // Log toàn bộ request
         console.log("---API--- Test DB");
+        console.log("Method:", req.method);
+        console.log("URL:", req.originalUrl);
+        console.log("Headers:", JSON.stringify(req.headers, null, 2));
+        console.log("Body:", JSON.stringify(req.body, null, 2));
+
+        // Thực hiện query DB
         const result = await pool.query("SELECT NOW()");
         res.json({ success: true, time: result.rows[0] });
     } catch (err) {
