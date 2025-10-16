@@ -86,24 +86,36 @@ function verifyWebhookSignature(headers, data, checksumKey) {
  *                   example: "OK"
  */
 
-router.post("/casso/webhook", async (req, res) => {
+router.post("/casso-webhook", async (req, res) => {
     try {
+        console.log("📩 Nhận webhook Casso:");
+        console.log("Headers:", req.headers);
+        console.log("Body:", JSON.stringify(req.body, null, 2));
+
         const headers = req.headers;
-        const payload = req.body;
+        const body = req.body;
+
+        if (!body || !body.data) {
+            console.warn("⚠️ Thiếu dữ liệu trong webhook");
+            return res.status(400).json({ error: "Thiếu dữ liệu" });
+        }
 
         const isValid = verifyWebhookSignature(
             headers,
-            payload.data,
+            body.data,
             process.env.CASSO_FLOW_CHECKSUM_KEY
         );
 
+        console.log("🔑 Xác thực chữ ký:", isValid);
+
         if (!isValid) {
-            return res.status(400).json({ error: "Signature không hợp lệ" });
+            console.warn("❌ Sai chữ ký, có thể giả mạo");
+            return res.status(400).json({ error: "Sai chữ ký, có thể giả mạo" });
         }
 
-        // ✅ Cộng 5.000 coin vào accountId = 1
-        const coinToAdd = 5000;
+        // Cộng coin
         const accountId = 1;
+        const coinToAdd = 5000;
 
         await db.query(
             `UPDATE account SET coin = coin + $1 WHERE "accountId" = $2`,
@@ -113,11 +125,10 @@ router.post("/casso/webhook", async (req, res) => {
         await db.query(
             `INSERT INTO transaction_history ("accountId", dats, transaction_data, coin_change)
              VALUES ($1, NOW(), $2, $3)`,
-            [accountId, `Nạp coin tự động từ Casso: ${payload.data.description}`, coinToAdd]
+            [accountId, `Cộng coin từ Casso giao dịch ${body.data.reference}`, coinToAdd]
         );
 
-        console.log(`✅ Cộng ${coinToAdd} coin cho accountId = ${accountId} từ Casso`);
-
+        console.log(`✅ Cộng ${coinToAdd} coin cho accountId = ${accountId}`);
         res.json({ message: "OK" });
     } catch (err) {
         console.error("🔥 Lỗi webhook Casso:", err);
