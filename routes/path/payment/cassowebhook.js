@@ -7,7 +7,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /payment/payos/webhook:
+ * /payment/webhook:
  *   post:
  *     summary: Webhook nhận thông tin thanh toán từ PayOS - Ver 1.0
  *     description: |
@@ -66,7 +66,7 @@ const router = express.Router();
  *         description: Lỗi hệ thống
  */
 
-router.post("/payos/webhook", async (req, res) => {
+router.post("/webhook", async (req, res) => {
     try {
         console.log("📩 Nhận webhook từ PayOS:", JSON.stringify(req.body, null, 2));
 
