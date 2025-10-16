@@ -17,7 +17,7 @@ const jwt = require("jsonwebtoken");
 /**
  * @swagger
  * /test/test-db:
- *   get:
+ *   post:
  *     summary: Test kết nối DB
  *     tags: [Test-API]
  *     responses:
@@ -35,7 +35,7 @@ const jwt = require("jsonwebtoken");
  */
 
 /* ✅ API test DB */
-router.get('/test-db', async function(req, res) {
+router.post('/test-db', async function(req, res) {
     try {
         console.log("---API--- Test DB");
         const result = await pool.query("SELECT NOW()");
