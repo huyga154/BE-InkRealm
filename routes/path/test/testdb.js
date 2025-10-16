@@ -34,24 +34,60 @@ const jwt = require("jsonwebtoken");
  *                   type: object
  */
 
-/* ✅ API test DB */
 router.post('/test-db', async function(req, res) {
     try {
-        // Log toàn bộ request
-        console.log("---API--- Test DB");
-        console.log("Method:", req.method);
-        console.log("URL:", req.originalUrl);
-        console.log("Headers:", JSON.stringify(req.headers, null, 2));
-        console.log("Body:", JSON.stringify(req.body, null, 2));
+        // Log request
+        const requestLog = {
+            method: req.method,
+            url: req.originalUrl,
+            headers: req.headers,
+            body: req.body
+        };
+        console.log("---API--- Test DB Request:", requestLog);
 
         // Thực hiện query DB
-        const result = await pool.query("SELECT NOW()");
-        res.json({ success: true, time: result.rows[0] });
+        const dbResult = await pool.query("SELECT NOW()");
+        const responseData = { success: true, time: dbResult.rows[0] };
+
+        // Log response
+        const responseLog = {
+            headers: res.getHeaders(),
+            body: responseData
+        };
+        console.log("Response:", responseLog);
+
+        // Trả về cả data lẫn log
+        res.json({
+            log: {
+                request: requestLog,
+                response: responseLog
+            },
+            data: responseData
+        });
     } catch (err) {
+        const errorData = { success: false, error: err.message };
+        const responseLog = {
+            headers: res.getHeaders(),
+            body: errorData
+        };
         console.error("DB Error:", err.message);
-        res.status(500).json({ success: false, error: err.message });
+        console.log("Response:", responseLog);
+
+        res.status(500).json({
+            log: {
+                request: {
+                    method: req.method,
+                    url: req.originalUrl,
+                    headers: req.headers,
+                    body: req.body
+                },
+                response: responseLog
+            },
+            data: errorData
+        });
     }
 });
+
 
 /**
  * @swagger
