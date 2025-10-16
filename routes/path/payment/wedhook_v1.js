@@ -2,6 +2,7 @@ const express = require("express");
 const crypto = require("crypto");
 const db = require("../../../db"); // import db của bạn
 require("dotenv").config();
+const sendResponseWithLog = require("../../utils/logResponse");
 
 const router = express.Router();
 
@@ -88,16 +89,11 @@ function verifyWebhookSignature(headers, data, checksumKey) {
 
 router.post("/casso/webhook", async (req, res) => {
     try {
-        console.log("📩 Nhận webhook Casso:");
-        console.log("Headers:", req.headers);
-        console.log("Body:", JSON.stringify(req.body, null, 2));
-
         const headers = req.headers;
         const body = req.body;
 
         if (!body || !body.data) {
-            console.warn("⚠️ Thiếu dữ liệu trong webhook");
-            return res.status(400).json({ error: "Thiếu dữ liệu" });
+            return sendResponseWithLog(res, req, { error: "Thiếu dữ liệu" }, 400);
         }
 
         const isValid = verifyWebhookSignature(
@@ -106,14 +102,10 @@ router.post("/casso/webhook", async (req, res) => {
             process.env.CASSO_FLOW_CHECKSUM_KEY
         );
 
-        console.log("🔑 Xác thực chữ ký:", isValid);
-
         if (!isValid) {
-            console.warn("❌ Sai chữ ký, có thể giả mạo");
-            return res.status(400).json({ error: "Sai chữ ký, có thể giả mạo" });
+            return sendResponseWithLog(res, req, { error: "Sai chữ ký, có thể giả mạo" }, 400);
         }
 
-        // Cộng coin
         const accountId = 1;
         const coinToAdd = 5000;
 
@@ -128,18 +120,18 @@ router.post("/casso/webhook", async (req, res) => {
             [accountId, `Cộng coin từ Casso giao dịch ${body.data.reference}`, coinToAdd]
         );
 
-        console.log(`✅ Cộng ${coinToAdd} coin cho accountId = ${accountId}`);
-
-        res.status(200).json({
+        const responseData = {
             message: "Cộng coin thành công",
-            accountId: accountId,
+            accountId,
             coinAdded: coinToAdd,
             transactionReference: body.data.reference,
             newBalance: "Có thể thêm query DB nếu muốn trả về số dư hiện tại"
-        });
+        };
+
+        return sendResponseWithLog(res, req, responseData, 200);
+
     } catch (err) {
-        console.error("🔥 Lỗi webhook Casso:", err);
-        res.status(500).json({ error: err.message });
+        return sendResponseWithLog(res, req, { error: err.message }, 500);
     }
 });
 
