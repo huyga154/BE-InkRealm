@@ -9,7 +9,7 @@ const router = express.Router();
  * @swagger
  * /payment/payos/webhook:
  *   post:
- *     summary: Webhook nhận thông tin thanh toán từ PayOS
+ *     summary: Webhook nhận thông tin thanh toán từ PayOS - Ver 1.0
  *     description: |
  *       PayOS sẽ gọi endpoint này khi người dùng thanh toán thành công.
  *       Hệ thống xác thực chữ ký (signature), sau đó cộng coin cho tài khoản đích và ghi lịch sử giao dịch.
