@@ -55,7 +55,7 @@ app.get("/api-docs.json", (req, res) => {
 
 // 404 handler
 app.use((req, res) => {
-    res.status(404).json({ error: "Not Found :3" });
+    res.status(404).json({ error: err.message });
 });
 
 // Error handler
