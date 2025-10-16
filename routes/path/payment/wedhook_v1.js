@@ -20,72 +20,28 @@ function sortObjDataByKey(data) {
 
 function verifyWebhookSignature(headers, data, checksumKey) {
     const receivedSignature = headers["x-casso-signature"];
-    if (!receivedSignature) return false;
+    if (!receivedSignature) return { valid: false };
 
-    const match = receivedSignature.match(/t=(\d+),v1=([a-f0-9]+)/i); // i: ignore case
-    if (!match) return false;
+    const match = receivedSignature.match(/t=(\d+),v1=([a-f0-9]+)/i);
+    if (!match) return { valid: false };
 
     const timestamp = match[1];
     const signature = match[2];
 
-    // GHI CHÚ: không sort key, giữ nguyên data
+    // Giữ nguyên thứ tự key, không sort
     const messageToSign = `${timestamp}.${JSON.stringify(data)}`;
-
     const generatedSignature = crypto
         .createHmac("sha512", checksumKey)
         .update(messageToSign)
         .digest("hex");
 
-    return signature.toLowerCase() === generatedSignature.toLowerCase();
+    return {
+        valid: signature.toLowerCase() === generatedSignature.toLowerCase(),
+        messageToSign,
+        generatedSignature,
+        receivedSignature: signature
+    };
 }
-
-/**
- * @swagger
- * /payment/casso/webhook:
- *   post:
- *     summary: Nhận webhook từ Casso khi có giao dịch
- *     tags:
- *       - Payment
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               error:
- *                 type: number
- *                 example: 0
- *               data:
- *                 type: object
- *                 example:
- *                   id: 218897
- *                   reference: "FT24364030863634"
- *                   description: "hoi lai 100 bao mun dua"
- *                   amount: 16775000
- *                   runningBalance: 16775000
- *                   transactionDateTime: "2024-12-23 07:00:00"
- *                   accountNumber: "123456789"
- *                   bankName: "MBBank"
- *                   bankAbbreviation: "MBB"
- *                   virtualAccountNumber: ""
- *                   virtualAccountName: ""
- *                   counterAccountName: ""
- *                   counterAccountNumber: ""
- *                   counterAccountBankId: ""
- *                   counterAccountBankName: ""
- *     responses:
- *       200:
- *         description: Xử lý thành công
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: "OK"
- */
 
 router.post("/casso/webhook", async (req, res) => {
     try {
@@ -96,14 +52,22 @@ router.post("/casso/webhook", async (req, res) => {
             return sendResponseWithLog(res, req, { error: "Thiếu dữ liệu" }, 400);
         }
 
-        const isValid = verifyWebhookSignature(
+        const result = verifyWebhookSignature(
             headers,
             body.data,
             process.env.CASSO_FLOW_CHECKSUM_KEY
         );
 
-        if (!isValid) {
-            return sendResponseWithLog(res, req, { error: "Sai chữ ký, có thể giả mạo" }, 400);
+        // Debug: trả luôn messageToSign và generatedSignature để test
+        if (!result.valid) {
+            return sendResponseWithLog(res, req, {
+                error: "Sai chữ ký, có thể giả mạo",
+                debug: {
+                    messageToSign: result.messageToSign,
+                    generatedSignature: result.generatedSignature,
+                    receivedSignature: result.receivedSignature
+                }
+            }, 400);
         }
 
         const accountId = 1;
@@ -125,7 +89,13 @@ router.post("/casso/webhook", async (req, res) => {
             accountId,
             coinAdded: coinToAdd,
             transactionReference: body.data.reference,
-            newBalance: "Có thể thêm query DB nếu muốn trả về số dư hiện tại"
+            newBalance: "Có thể thêm query DB nếu muốn trả về số dư hiện tại",
+            // Có thể thêm debug nếu muốn kiểm tra chữ ký đúng
+            debug: {
+                messageToSign: result.messageToSign,
+                generatedSignature: result.generatedSignature,
+                receivedSignature: result.receivedSignature
+            }
         };
 
         return sendResponseWithLog(res, req, responseData, 200);
