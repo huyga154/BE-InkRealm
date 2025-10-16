@@ -86,7 +86,7 @@ function verifyWebhookSignature(headers, data, checksumKey) {
  *                   example: "OK"
  */
 
-router.post("/casso-webhook", async (req, res) => {
+router.post("/casso/webhook", async (req, res) => {
     try {
         console.log("📩 Nhận webhook Casso:");
         console.log("Headers:", req.headers);
@@ -129,7 +129,7 @@ router.post("/casso-webhook", async (req, res) => {
         );
 
         console.log(`✅ Cộng ${coinToAdd} coin cho accountId = ${accountId}`);
-        
+
         res.status(200).json({
             message: "Cộng coin thành công",
             accountId: accountId,
