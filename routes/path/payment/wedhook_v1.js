@@ -129,7 +129,14 @@ router.post("/casso-webhook", async (req, res) => {
         );
 
         console.log(`✅ Cộng ${coinToAdd} coin cho accountId = ${accountId}`);
-        res.json({ message: "OK" });
+        
+        res.status(200).json({
+            message: "Cộng coin thành công",
+            accountId: accountId,
+            coinAdded: coinToAdd,
+            transactionReference: body.data.reference,
+            newBalance: "Có thể thêm query DB nếu muốn trả về số dư hiện tại"
+        });
     } catch (err) {
         console.error("🔥 Lỗi webhook Casso:", err);
         res.status(500).json({ error: err.message });
