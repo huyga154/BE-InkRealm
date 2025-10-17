@@ -115,7 +115,7 @@ router.post("/webhook", async (req, res) => {
         const amount = Number(data.amount || 0);
         const description = data.description;
 
-        const match = description.match(/napuser(\d+)/i);
+        const match = description.match(/napuser(\d+)\s+(\d+)/i);
         if (!match) {
             console.warn("⚠️ Không tìm thấy userId trong description:", description);
             return res.status(400).json({ error: description });
