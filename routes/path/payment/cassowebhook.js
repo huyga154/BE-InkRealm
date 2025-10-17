@@ -121,19 +121,34 @@ router.post("/webhook", async (req, res) => {
             return res.status(400).json({ error: description });
         }
 
-        const userId = match[1];
+        const userId = Number(match[1]);
+        const coinToAdd = Number(match[2]);
+
+        if (isNaN(userId) || isNaN(coinToAdd)) {
+            return res.status(400).json({ error: "Sai format description" });
+        }
 
         // ===== 4️⃣ Cộng tiền và ghi log =====
         await db.query(
             `UPDATE account SET coin = coin + $1 WHERE "accountId" = $2`,
-            [amount, userId]
+            [coinToAdd, userId]
         );
 
         await db.query(
             `INSERT INTO transaction_history ("accountId", dats, transaction_data, coin_change)
        VALUES ($1, NOW(), $2, $3)`,
-            [userId, description, amount]
+            [userId, description, coinToAdd]
         );
+       //  await db.query(
+       //      `UPDATE account SET coin = coin + $1 WHERE "accountId" = $2`,
+       //      [amount, userId]
+       //  );
+       //
+       //  await db.query(
+       //      `INSERT INTO transaction_history ("accountId", dats, transaction_data, coin_change)
+       // VALUES ($1, NOW(), $2, $3)`,
+       //      [userId, description, amount]
+       //  );
 
        //  const accountId = process.env.TARGET_ACCOUNT_ID || 1; // Tài khoản mặc định để cộng coin
        //
@@ -176,7 +191,7 @@ router.post("/webhook", async (req, res) => {
  *                 example: 2000
  *               description:
  *                 type: string
- *                 example: "napuser1"
+ *                 example: "napuser1 2200"
  *               returnUrl:
  *                 type: string
  *                 example: "https://www.youtube.com/"
