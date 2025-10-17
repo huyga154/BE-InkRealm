@@ -12,7 +12,6 @@ const novelRouter = require("./routes/path/novel/novel_api");
 const chapterRouter = require("./routes/path/chapter/chapter_api")
 const authRouter = require("./routes/path/auth/auth_api");
 const cassoRouter = require("./routes/path/payment/cassowebhook");
-const webhookRouter = require("./routes/path/payment/wedhook_v1")
 
 const corsMiddleware = require("./routes/config/corsConfig");
 
@@ -35,8 +34,6 @@ app.use("/novel", novelRouter);
 app.use("/chapter", chapterRouter)
 app.use("/auth", authRouter);
 app.use("/payment", cassoRouter);
-app.use("/payment", webhookRouter)
-
 
 // Swagger UI (truy cập ở /api/api-docs trên Vercel, /api-docs khi local)
 app.use(
