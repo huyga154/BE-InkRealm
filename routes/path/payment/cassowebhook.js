@@ -91,7 +91,7 @@ router.post("/webhook", async (req, res) => {
         const sortedDataByKey = sortObjDataByKey(data);
         const dataQueryStr = convertObjToQueryStr(sortedDataByKey);
         const computedSignature = crypto
-            .createHmac("sha256", process.env.PAYOS_CHECKSUM_KEY)
+            .createHmac("sha256", process.env.CASSO_CHECKSUM_KEY)
             .update(dataQueryStr)
             .digest("hex");
 
