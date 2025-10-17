@@ -164,7 +164,7 @@ router.post("/webhook", async (req, res) => {
        //      [accountId, description, amount]
        //  );
 
-        console.log(`✅ Cộng ${amount} coin cho accountId = ${accountId}`);
+        console.log(`✅ Cộng ${coinToAdd} coin cho accountId = ${userId}`);
         res.json({ message: "OK" });
     } catch (err) {
         console.error("🔥 Lỗi webhook:", err);
