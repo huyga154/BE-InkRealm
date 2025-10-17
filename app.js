@@ -11,7 +11,7 @@ const testdbRouter = require("./routes/path/test/testdb");
 const novelRouter = require("./routes/path/novel/novel_api");
 const chapterRouter = require("./routes/path/chapter/chapter_api")
 const authRouter = require("./routes/path/auth/auth_api");
-const cassoRouter = require("./routes/path/payment/cassowebhook");
+const cassoRouter = require("./routes/path/payment/payment_api");
 
 const corsMiddleware = require("./routes/config/corsConfig");
 
