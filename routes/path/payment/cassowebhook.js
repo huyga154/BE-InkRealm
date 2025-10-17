@@ -137,8 +137,9 @@ router.post("/webhook", async (req, res) => {
         await db.query(
             `INSERT INTO transaction_history ("accountId", dats, transaction_data, coin_change)
        VALUES ($1, NOW(), $2, $3)`,
-            [userId, description, coinToAdd]
+            [userId, description, "+" + coinToAdd]
         );
+
        //  await db.query(
        //      `UPDATE account SET coin = coin + $1 WHERE "accountId" = $2`,
        //      [amount, userId]

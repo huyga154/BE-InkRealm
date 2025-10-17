@@ -156,3 +156,6 @@ ALTER TABLE "novel_info"
 
 ALTER TABLE account
     ADD COLUMN email VARCHAR(255);
+
+ALTER TABLE "transaction_history"
+    ALTER COLUMN "coin_change" TYPE VARCHAR(25);
