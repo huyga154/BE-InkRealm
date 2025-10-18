@@ -1,6 +1,6 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const pool = require("../../db");
+const pool = require("../config/db");
 const {log} = require("debug");
 const sendMail = require("../utils/sendEmail");
 require("dotenv").config();

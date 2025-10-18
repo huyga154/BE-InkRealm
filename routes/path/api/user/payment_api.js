@@ -1,6 +1,6 @@
 const express = require("express");
 const crypto = require("crypto");
-const db = require("../../../../db");
+const db = require("../../../config/db");
 const {postWebHookCasso, postCreatePaymentLink} = require("../../../controllers/paymentController")
 require("dotenv").config();
 

@@ -1,5 +1,5 @@
 var express = require('express');
-const pool = require("../../db");
+const pool = require("../config/db");
 
 exports.postGetAllNovel = async (req,res) => {
     try {
@@ -37,7 +37,7 @@ exports.postGetNovelByNovelId = async (req,res) => {
 exports.postCreateNovel = async (req,res) => {
     try {
         const { novelTitle, novelDescription, author } = req.body;
-        const accountId = req.user.id; // lấy từ token
+        const accountId = req.user.accountId; // lấy từ token
 
         if (!novelTitle || !author) {
             return res.status(400).json({ error: "Thiếu novelTitle hoặc author" });

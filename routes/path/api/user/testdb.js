@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-const pool = require("../../../../db");
+const pool = require("../../../config/db");
 
 require("dotenv").config();
 const nodemailer = require("nodemailer");
@@ -34,7 +34,7 @@ const jwt = require("jsonwebtoken");
  *                   type: object
  */
 
-router.post('/test-db', async function(req, res) {
+router.post('/test/test-db', async function(req, res) {
     try {
         // Log request
         const requestLog = {
@@ -133,7 +133,7 @@ router.post('/test-db', async function(req, res) {
  *       500:
  *         description: Lỗi server khi gửi email
  */
-router.post("/send-mail", async (req, res) => {
+router.post("/test/send-mail", async (req, res) => {
     const { to, subject, text } = req.body;
 
     if (!to) return res.status(400).json({ error: "Recipient email is required" });

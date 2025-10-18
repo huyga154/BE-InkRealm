@@ -1,6 +1,6 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const pool = require("../../db");
+const pool = require("../config/db");
 const {log} = require("debug");
 const sendMail = require("../utils/sendEmail");
 require("dotenv").config();
@@ -28,22 +28,32 @@ exports.getChapterList = async (req,res) => {
     }
 }
 
-exports.postAddNewChapter = async (req,res) => {
+exports.postAddNewChapter = async (req, res) => {
     try {
-        const { novelId, chapterIndex, chapterTitle, chapterText} =
-            req.body;
+        const { novelId, chapterIndex, chapterTitle, chapterText } = req.body;
 
-        if (!novelId || !chapterTitle || !chapterText || !chapterIndex) {
-            return res
-                .status(400)
-                .json({ error: "Thiếu param" });
+        if (!novelId || !chapterTitle || !chapterText || chapterIndex == null) {
+            return res.status(400).json({ error: "Thiếu param" });
+        }
+
+        // 🔹 Kiểm tra xem index đã tồn tại trong truyện này chưa
+        const checkIndex = await pool.query(
+            `SELECT 1 FROM chapter WHERE "novelId"=$1 AND "chapterIndex"=$2`,
+            [novelId, chapterIndex]
+        );
+
+        if (checkIndex.rowCount > 0) {
+            return res.status(400).json({
+                error: `Index số ${chapterIndex} đã tồn tại trong truyện này`
+            });
         }
 
         const result = await pool.query(
-            `INSERT INTO chapter ("novelId", "chapterIndex", "chapterTitle", "chapterText", "chapterStatusId", "createDate")
+            `INSERT INTO chapter 
+             ("novelId", "chapterIndex", "chapterTitle", "chapterText", "chapterStatusId", "createDate")
              VALUES ($1, $2, $3, $4, $5, NOW())
-                 RETURNING "chapterId"`,
-            [novelId, chapterIndex , chapterTitle, chapterText, 2]
+             RETURNING "chapterId"`,
+            [novelId, chapterIndex, chapterTitle, chapterText, 2] // 2 = draft/active status
         );
 
         res.status(201).json({
@@ -54,7 +64,7 @@ exports.postAddNewChapter = async (req,res) => {
         console.error("❌ Lỗi khi thêm chapter:", err.message);
         res.status(500).json({ error: "Không thể thêm chapter mới" });
     }
-}
+};
 
 exports.getChapterText = async (req,res) => {
     try {
@@ -175,4 +185,30 @@ exports.getChapterDetail = async (req,res) => {
     }
 }
 
-exports.
+exports.putChangeChapterStatus = async (req, res) => {
+    try {
+        const { chapterId, chapterStatusId } = req.params;
+
+        // Kiểm tra param
+        if (!chapterId || isNaN(parseInt(chapterId))) {
+            return res.status(400).json({ message: "chapterId không hợp lệ" });
+        }
+        if (!chapterStatusId || isNaN(parseInt(chapterStatusId))) {
+            return res.status(400).json({ message: "chapterStatusId không hợp lệ" });
+        }
+
+        const result = await pool.query(
+            'UPDATE "chapter" SET "chapterStatusId"=$1, "updateDate"=NOW() WHERE "chapterId"=$2 RETURNING "chapterId"',
+            [chapterStatusId, chapterId]
+        );
+
+        if (result.rowCount === 0) {
+            return res.status(404).json({ message: "Chương không tồn tại" });
+        }
+
+        res.json({ success: true, message: "Trạng thái chương đã được cập nhật" });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Lỗi server" });
+    }
+};

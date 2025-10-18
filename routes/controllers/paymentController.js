@@ -1,6 +1,6 @@
 const express = require("express");
 const crypto = require("crypto");
-const db = require("../../db");
+const db = require("../config/db");
 const payos = require("../utils/payos");
 require("dotenv").config();
 

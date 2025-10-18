@@ -81,7 +81,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /novel/create:
+ * /uploader/novel/create:
  *   post:
  *     summary: Tạo mới novel (yêu cầu đăng nhập)
  *     tags: [Novels]
