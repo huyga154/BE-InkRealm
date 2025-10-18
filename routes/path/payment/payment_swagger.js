@@ -1,6 +1,12 @@
 const express = require("express");
 const router = express.Router();
 
+/**
+ * @swagger
+ * tags:
+ *   name: Payment
+ *   description: API cho thanh toán
+ */
 
 /**
  * @swagger
