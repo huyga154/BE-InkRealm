@@ -4,15 +4,8 @@ const logger = require("morgan");
 const path = require("path");
 const { swaggerUi, swaggerSpec } = require("./swagger");
 
-// Import routers
-const indexRouter = require("./routes/index");
-const usersRouter = require("./routes/users");
-const testdbRouter = require("./routes/path/test/testdb");
-const novelRouter = require("./routes/path/novel/novel_api");
-const chapterRouter = require("./routes/path/chapter/chapter_api")
-const authRouter = require("./routes/path/auth/auth_api");
-const cassoRouter = require("./routes/path/payment/payment_api");
-// const cassoSwaggerRouter = require("./routes/path/payment/payment_swagger");
+const registerAPIs = require("./routes/config/api_register");
+const registerSwagger = require("./routes/config/swagger_register")
 
 const corsMiddleware = require("./routes/config/corsConfig");
 
@@ -27,15 +20,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
-// Routes
-app.use("/index", indexRouter);
-app.use("/users", usersRouter);
-app.use("/test", testdbRouter);
-app.use("/novel", novelRouter);
-app.use("/chapter", chapterRouter)
-app.use("/auth", authRouter);
-app.use("/payment", cassoRouter);
-// app.use("/payment", cassoSwaggerRouter);
+registerAPIs(app);
+registerSwagger(app);
 
 // Swagger UI (truy cập ở /api/api-docs trên Vercel, /api-docs khi local)
 app.use(

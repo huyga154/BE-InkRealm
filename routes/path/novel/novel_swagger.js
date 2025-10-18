@@ -1,3 +1,6 @@
+const express = require("express");
+const router = express.Router();
+
 /**
  * @swagger
  * tags:
@@ -113,3 +116,5 @@
  *       500:
  *         description: Lỗi server
  */
+
+module.exports = router;
