@@ -16,7 +16,7 @@ exports.getChapterList = async (req,res) => {
         const result = await pool.query(
             `SELECT "chapterId", "chapterTitle", "chapterIndex", "createDate", "updateDate"
              FROM chapter
-             WHERE "novelId" = $1
+             WHERE "novelId" = $1 AND "chapterStatusId" = 2
              ORDER BY "chapterIndex" ASC`,
             [novelId]
         );
@@ -30,10 +30,10 @@ exports.getChapterList = async (req,res) => {
 
 exports.postAddNewChapter = async (req,res) => {
     try {
-        const { novelId, chapterIndex, chapterTitle, chapterText, chapterStatusId } =
+        const { novelId, chapterIndex, chapterTitle, chapterText} =
             req.body;
 
-        if (!novelId || !chapterTitle || !chapterText || !chapterIndex || !chapterStatusId) {
+        if (!novelId || !chapterTitle || !chapterText || !chapterIndex) {
             return res
                 .status(400)
                 .json({ error: "Thiếu param" });
@@ -43,7 +43,7 @@ exports.postAddNewChapter = async (req,res) => {
             `INSERT INTO chapter ("novelId", "chapterIndex", "chapterTitle", "chapterText", "chapterStatusId", "createDate")
              VALUES ($1, $2, $3, $4, $5, NOW())
                  RETURNING "chapterId"`,
-            [novelId, chapterIndex , chapterTitle, chapterText, chapterStatusId]
+            [novelId, chapterIndex , chapterTitle, chapterText, 2]
         );
 
         res.status(201).json({
@@ -174,3 +174,5 @@ exports.getChapterDetail = async (req,res) => {
         res.status(500).json({ error: "Không thể lấy chi tiết chapter" });
     }
 }
+
+exports.

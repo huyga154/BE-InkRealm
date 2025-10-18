@@ -70,7 +70,6 @@ var router = express.Router();
  *               - novelId
  *               - chapterTitle
  *               - chapterText
- *               -
  *             properties:
  *               novelId:
  *                 type: integer
