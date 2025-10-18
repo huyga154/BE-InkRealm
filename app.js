@@ -2,7 +2,8 @@ const express = require("express");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const path = require("path");
-const { swaggerUi, swaggerSpec } = require("./routes/config/swagger/swagger_all");
+const { swaggerUi, swaggerSpec } = require("./routes/config/swagger");
+
 
 const registerAPIs = require("./routes/path/api/api_register");
 const registerSwagger = require("./routes/path/swagger/swagger_register")

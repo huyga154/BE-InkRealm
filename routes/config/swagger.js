@@ -11,7 +11,6 @@ const options = {
         },
         servers: [
             { url: "/", description: "API toàn bộ api" },       // mọi người đều xem được
-            { url: "/uploader", description: "API uploader" },// chỉ người đăng truyện
         ],
         components: {
             securitySchemes: {
