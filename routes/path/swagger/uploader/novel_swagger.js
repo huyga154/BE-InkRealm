@@ -13,7 +13,8 @@ const router = express.Router();
  * /uploader/novel/create:
  *   post:
  *     summary: Tạo mới novel (yêu cầu đăng nhập)
- *     tags: [Novels]
+ *     tags:
+ *       - Novels
  *     security:
  *       - bearerAuth: []
  *     requestBody:
