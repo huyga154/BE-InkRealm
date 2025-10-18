@@ -1,8 +1,5 @@
 var express = require('express');
 var router = express.Router();
-const pool = require("../../../db");
-const { verifyToken } = require("../../middleware/authMiddleware");
-const {getChapterList, postAddNewChapter, getChapterText, getChapterDetail} = require("../../controllers/chapterController");
 
 /**
  * @swagger
@@ -10,6 +7,7 @@ const {getChapterList, postAddNewChapter, getChapterText, getChapterDetail} = re
  *   name: Chapter
  *   description: API cho truyện
  */
+
 
 
 /**
@@ -53,7 +51,7 @@ const {getChapterList, postAddNewChapter, getChapterText, getChapterDetail} = re
  *       500:
  *         description: Lỗi server
  */
-router.get("/list", getChapterList);
+
 
 
 /**
@@ -106,7 +104,8 @@ router.get("/list", getChapterList);
  *       500:
  *         description: Lỗi server
  */
-router.post("/add", postAddNewChapter);
+
+
 
 /**
  * @swagger
@@ -163,7 +162,8 @@ router.post("/add", postAddNewChapter);
  *       500:
  *         description: Lỗi server
  */
-router.get("/text", verifyToken, getChapterText);
+
+
 
 /**
  * @swagger
@@ -212,6 +212,5 @@ router.get("/text", verifyToken, getChapterText);
  *       500:
  *         description: Lỗi server
  */
-router.get("/detail", getChapterDetail);
 
 module.exports = router;

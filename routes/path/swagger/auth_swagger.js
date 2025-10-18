@@ -1,9 +1,5 @@
-const express = require("express");
-const router = express.Router();
-const pool = require("../../../db");
-const { register, login, getProfile, changePassword, resetPassword} = require("../../controllers/authController");
-const { verifyToken } = require("../../middleware/authMiddleware");
-const {log} = require("debug");
+var express = require('express');
+var router = express.Router();
 
 /**
  * @swagger
@@ -46,8 +42,6 @@ const {log} = require("debug");
  *       400:
  *         description: Username đã tồn tại
  */
-router.post("/register", register);
-
 
 /**
  * @swagger
@@ -74,9 +68,6 @@ router.post("/register", register);
  *       400:
  *         description: Sai tên đăng nhập hoặc mật khẩu
  */
-router.post("/login", login);
-
-
 
 /**
  * @swagger
@@ -92,7 +83,6 @@ router.post("/login", login);
  *       401:
  *         description: Token không hợp lệ hoặc chưa đăng nhập
  */
-router.get("/profile", verifyToken, getProfile);
 
 /**
  * @swagger
@@ -158,7 +148,6 @@ router.get("/profile", verifyToken, getProfile);
  *                   type: string
  *                   example: Server error
  */
-router.post("/reset-password", resetPassword);
 
 /**
  * @swagger
@@ -233,7 +222,5 @@ router.post("/reset-password", resetPassword);
  *                   type: string
  *                   example: Server error
  */
-router.post("/change-password", verifyToken, changePassword );
-
 
 module.exports = router;

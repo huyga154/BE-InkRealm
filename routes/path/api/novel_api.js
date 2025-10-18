@@ -9,9 +9,7 @@ const {
         } = require("../../controllers/novelController");
 
 router.post("/all", postGetAllNovel);
-
 router.post("/novelId", postGetNovelByNovelId);
-
 router.post("/create", verifyToken, postCreateNovel);
 
 module.exports = router;
