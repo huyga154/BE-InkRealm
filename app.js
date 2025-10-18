@@ -4,8 +4,8 @@ const logger = require("morgan");
 const path = require("path");
 const { swaggerUi, swaggerSpec } = require("./swagger");
 
-const registerAPIs = require("./routes/path/api_register");
-const registerSwagger = require("./routes/path/swagger_register")
+const registerAPIs = require("./routes/path/api/api_register");
+const registerSwagger = require("./routes/path/swagger/swagger_register")
 
 const corsMiddleware = require("./routes/config/corsConfig");
 

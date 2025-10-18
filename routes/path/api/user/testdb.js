@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-const pool = require("../../../db");
+const pool = require("../../../../db");
 
 require("dotenv").config();
 const nodemailer = require("nodemailer");

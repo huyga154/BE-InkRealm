@@ -1,8 +1,8 @@
 // swagger_register.js
-const cassoSwaggerRouter = require("./swagger/payment_swagger");
-const novelSwaggerRouter = require("./swagger/novel_swagger")
-const authSwaggerRouter = require("./swagger/auth_swagger")
-const chapterSwaggerRouter = require("./swagger/chapter_swagger")
+const cassoSwaggerRouter = require("./user/payment_swagger");
+const novelSwaggerRouter = require("./user/novel_swagger")
+const authSwaggerRouter = require("./user/auth_swagger")
+const chapterSwaggerRouter = require("./user/chapter_swagger")
 
 module.exports = (app) => {
     // Đăng ký tất cả các route Swagger riêng (nếu có thêm sau này)
