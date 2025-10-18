@@ -1,6 +1,11 @@
 {
   "routes": [
     {
+      "src": "^/$",
+      "status": 307,
+      "headers": { "Location": "/api-docs" }
+    },
+    {
       "src": "/api-docs/swagger-ui.css",
       "dest": "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui.min.css"
     },
