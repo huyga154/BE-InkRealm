@@ -36,3 +36,42 @@ exports.verifyUploader = async (req, res, next) => {
     }
 };
 
+exports.resetStatusToDraft = async (req, res, next) => {
+    try {
+        const { chapterId } = req.body;
+
+        if (!chapterId) {
+            return res.status(400).json({ message: "Thiếu chapterId trong request body" });
+        }
+
+        // 🔍 Lấy id của status "draft"
+        const draftStatus = await pool.query(
+            `SELECT "chapterStatusId"
+             FROM "chapter_status"
+             WHERE LOWER("chapterStatusCode") = 'draft'
+             LIMIT 1`
+        );
+
+        if (draftStatus.rows.length === 0) {
+            return res.status(500).json({ message: "Không tìm thấy trạng thái 'draft' trong hệ thống" });
+        }
+
+        const draftStatusId = draftStatus.rows[0].chapterStatusId;
+
+        // 🔄 Cập nhật chương -> chuyển sang draft luôn
+        await pool.query(
+            `UPDATE "chapter"
+             SET "chapterStatusId" = $1
+             WHERE "chapterId" = $2`,
+            [draftStatusId, chapterId]
+        );
+
+        console.log(`🔄 Chương ${chapterId} bị chỉnh sửa → chuyển trạng thái sang 'draft'`);
+
+        next();
+    } catch (err) {
+        console.error("resetStatusToDraft error:", err);
+        return res.status(500).json({ message: "Lỗi khi chuyển trạng thái chương sang draft" });
+    }
+};
+

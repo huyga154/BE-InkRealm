@@ -226,3 +226,45 @@ exports.putChangeChapterStatus = async (req, res) => {
     }
 };
 
+exports.putUpdateChapterText = async (req, res) => {
+    try {
+        const { chapterId, chapterText } = req.body;
+
+        // ✅ Kiểm tra đầu vào
+        if (!chapterId || isNaN(chapterId)) {
+            return res.status(400).json({ message: "chapterId không hợp lệ" });
+        }
+
+        if (!chapterText || typeof chapterText !== "string" || chapterText.trim() === "") {
+            return res.status(400).json({ message: "Thiếu hoặc sai định dạng nội dung chương (chapterText)" });
+        }
+
+        // ✅ Cập nhật nội dung chương
+        const result = await pool.query(
+            `UPDATE "chapter"
+             SET "chapterText" = $1,
+                 "updateDate" = NOW()
+             WHERE "chapterId" = $2
+             RETURNING "chapterId", "chapterTitle", "chapterText", "updateDate"`,
+            [chapterText.trim(), chapterId]
+        );
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ message: "Không tìm thấy chương cần cập nhật" });
+        }
+
+        // ✅ Phản hồi
+        return res.status(200).json({
+            message: "Cập nhật nội dung chương thành công",
+            chapter: result.rows[0],
+        });
+
+    } catch (err) {
+        console.error("putUpdateChapterText error:", err);
+        return res.status(500).json({ message: "Lỗi khi cập nhật nội dung chương" });
+    }
+};
+
+
+
+

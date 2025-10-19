@@ -5,13 +5,18 @@ const {
     getChapterList,
     postAddNewChapter,
     getChapterText,
-    getChapterDetail
-        } = require("../../controllers/chapterController");
-const { verifyUploader } = require("../../middleware/chapterMiddleware");
+    getChapterDetail, putUpdateChapterText
+} = require("../../controllers/chapterController");
+const { verifyUploader, resetStatusToDraft} = require("../../middleware/chapterMiddleware");
 
-router.get("/list/:novelId", getChapterList);
-router.post("/add", postAddNewChapter);
-router.get("/text", verifyToken, getChapterText);
-router.get("/detail", getChapterDetail);
+router.get("/chapter/list/:novelId", getChapterList);
+router.post("/chapter/add", postAddNewChapter);
+router.get("/chapter/text", verifyToken, getChapterText);
+router.get("/chapter/detail", getChapterDetail);
+router.put("/chapter/text/update",
+    verifyToken,
+    verifyUploader,
+    resetStatusToDraft,
+    putUpdateChapterText);
 
 module.exports = router;

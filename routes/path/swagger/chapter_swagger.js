@@ -222,66 +222,73 @@ var router = express.Router();
  */
 
 
-// /**
-//  * @swagger
-//  * /chapter/{chapterId}/status/{chapterStatusId}:
-//  *   put:
-//  *     summary: Thay đổi trạng thái chương truyện
-//  *     description: |
-//  *       1. API cho phép người dùng **chủ sở hữu của chương** thay đổi trạng thái.<br>
-//  *       2. Chỉ người đăng chương (uploader) mới được phép đổi trạng thái.<br>
-//  *       3. JWT token phải được gửi trong header `Authorization` (Bearer token).<br>
-//  *       4. ChapterId và ChapterStatusId được truyền qua đường dẫn.<br>
-//  *
-//  *       **Ví dụ:** `/chapter/10/status/2`
-//  *
-//  *     tags: [Chapter]
-//  *     security:
-//  *       - bearerAuth: []
-//  *     parameters:
-//  *       - in: path
-//  *         name: chapterId
-//  *         schema:
-//  *           type: integer
-//  *         required: true
-//  *         description: ID của chương muốn thay đổi trạng thái
-//  *       - in: path
-//  *         name: chapterStatusId
-//  *         schema:
-//  *           type: integer
-//  *         required: true
-//  *         description: ID trạng thái mới của chương
-//  *     responses:
-//  *       200:
-//  *         description: Thay đổi trạng thái thành công
-//  *         content:
-//  *           application/json:
-//  *             schema:
-//  *               type: object
-//  *               properties:
-//  *                 success:
-//  *                   type: boolean
-//  *                   example: true
-//  *                 message:
-//  *                   type: string
-//  *                   example: Trạng thái chương đã được cập nhật
-//  *       401:
-//  *         description: Token không hợp lệ hoặc chưa đăng nhập
-//  *       403:
-//  *         description: User không phải uploader
-//  *         content:
-//  *           application/json:
-//  *             schema:
-//  *               type: object
-//  *               properties:
-//  *                 message:
-//  *                   type: string
-//  *                   example: Bạn không có quyền thay đổi chương này
-//  *       404:
-//  *         description: Chương không tồn tại
-//  *       500:
-//  *         description: Lỗi server
-//  */
+/**
+ * @swagger
+ * /chapter/text/update:
+ *   put:
+ *     summary: Cập nhật nội dung chương
+ *     description: |
+ *       API cho phép người đăng truyện chỉnh sửa nội dung chương.<br>
+ *       Nếu chương đang ở trạng thái **public** hoặc trạng thái khác bất kỳ, hệ thống sẽ tự động chuyển về **draft** trước khi cập nhật.<br>
+ *       Middleware sử dụng:<br>
+ *       - <b>verifyToken</b>: xác thực người dùng.<br>
+ *       - <b>verifyUploader</b>: kiểm tra người đăng truyện.<br>
+ *       - <b>resetStatusToDraft</b>: tự động chuyển chương về draft.<br>
+ *       - <b>putUpdateChapterText</b>: cập nhật nội dung chương.
+ *     tags:
+ *       - Chapter
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - chapterId
+ *               - chapterText
+ *             properties:
+ *               chapterId:
+ *                 type: integer
+ *                 example: 42
+ *                 description: ID của chương cần chỉnh sửa.
+ *               chapterText:
+ *                 type: string
+ *                 example: "Nội dung chương mới được chỉnh sửa..."
+ *                 description: Nội dung chương sau khi cập nhật.
+ *     responses:
+ *       200:
+ *         description: Cập nhật chương thành công.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Cập nhật nội dung chương thành công"
+ *                 chapter:
+ *                   type: object
+ *                   properties:
+ *                     chapterId:
+ *                       type: integer
+ *                       example: 42
+ *                     chapterText:
+ *                       type: string
+ *                       example: "Nội dung chương sau khi cập nhật..."
+ *       400:
+ *         description: Thiếu dữ liệu yêu cầu (chapterId hoặc chapterText).
+ *       401:
+ *         description: Người dùng chưa đăng nhập hoặc token không hợp lệ.
+ *       403:
+ *         description: Người dùng không phải uploader của truyện.
+ *       404:
+ *         description: Không tìm thấy chương cần cập nhật.
+ *       500:
+ *         description: Lỗi máy chủ khi cập nhật chương.
+ */
+
 
 
 

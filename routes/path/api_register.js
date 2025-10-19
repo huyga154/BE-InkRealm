@@ -12,7 +12,7 @@ module.exports = (app) => {
     app.use("/", indexRouter);
     app.use("/", testdbRouter);
     app.use("/", novelRouter);
-    app.use("/chapter", chapterRouter);
+    app.use("/", chapterRouter);
     app.use("/auth", authRouter);
     app.use("/payment", cassoRouter);
     app.use("/",chapterStatusRouter)
