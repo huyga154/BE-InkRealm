@@ -191,3 +191,4 @@ ALTER TABLE "account"
 -- =========================================
 CREATE INDEX IF NOT EXISTS idx_account_roleId
     ON "account"("roleId");
+
