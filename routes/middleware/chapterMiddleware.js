@@ -3,10 +3,18 @@ const pool = require("../config/db");
 exports.verifyUploader = async (req, res, next) => {
     try {
         const { chapterId } = req.params;
-        const accountId = req.user.accountId;
+        const accountId = req.user?.accountId;
 
+        if (!chapterId || !accountId) {
+            return res.status(400).json({ message: "Thiếu thông tin chapterId hoặc accountId" });
+        }
+
+        // Lấy novelId và accountId của uploader từ chapter
         const result = await pool.query(
-            'SELECT "novelId" FROM "chapter" WHERE "chapterId"=$1',
+            `SELECT c."novelId", n."accountId" AS "uploaderId"
+             FROM "chapter" c
+             JOIN "novel_info" n ON c."novelId" = n."novelId"
+             WHERE c."chapterId" = $1`,
             [chapterId]
         );
 
@@ -14,21 +22,17 @@ exports.verifyUploader = async (req, res, next) => {
             return res.status(404).json({ message: "Chương không tìm thấy" });
         }
 
-        const chapter = result.rows[0];
+        const { uploaderId } = result.rows[0];
 
-        // Kiểm tra xem user có phải uploader của novel chứa chapter này không
-        const checkUploader = await pool.query(
-            'SELECT 1 FROM "uploader" WHERE "accountId"=$1 AND "novelId"=$2',
-            [accountId, chapter.novelId]
-        );
-
-        if (checkUploader.rowCount === 0) {
-            return res.status(403).json({ message: "Bạn không có quyền thay đổi chương này" });
+        // Kiểm tra quyền
+        if (uploaderId !== accountId) {
+            return res.status(403).json({ message: "Bạn không có quyền hạn thay đổi chương này" });
         }
 
         next();
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: "Lỗi server" });
+        console.error("verifyUploader error:", err);
+        res.status(500).json({ message: "Lỗi server khi kiểm tra quyền" });
     }
 };
+

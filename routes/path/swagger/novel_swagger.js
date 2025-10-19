@@ -10,13 +10,6 @@ const router = express.Router();
 
 /**
  * @swagger
- * tags:
- *   name: Uploader
- *   description: API cho người đăng truyện / tác giả
- */
-
-/**
- * @swagger
  * /uploader/novel/create:
  *   post:
  *     summary: Tạo mới novel (yêu cầu đăng nhập)

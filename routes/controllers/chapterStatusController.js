@@ -34,3 +34,31 @@ exports.updateChapterStatus = async (req, res) => {
         res.status(500).json({ message: "Lỗi server khi cập nhật trạng thái chương" });
     }
 };
+
+
+
+exports.getChapterStatusList = async (req, res) => {
+    try {
+        const { where } = req.chapterFilter || {};
+        let query = `
+            SELECT c."chapterId", c."chapterTitle", c."chapterStatusId", 
+                   cs."chapterStatusCode", cs."chapterStatusDescription"
+            FROM "chapter" c
+            JOIN "chapter_status" cs ON c."chapterStatusId" = cs."chapterStatusId"
+            JOIN "novel_info" n ON c."novelId" = n."novelId"
+        `;
+
+        if (where) {
+            query += ` WHERE ${where}`;
+        }
+
+        query += ' ORDER BY c."chapterIndex" ASC';
+
+        const result = await pool.query(query);
+        res.json(result.rows);
+    } catch (err) {
+        console.error('getChapterStatusList error:', err);
+        res.status(500).json({ message: 'Lỗi server khi lấy danh sách chapter' });
+    }
+};
+

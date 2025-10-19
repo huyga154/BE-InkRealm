@@ -1,5 +1,4 @@
 const pool = require("../config/db");
-require("dotenv").config();
 
 const STATUS = {
     PUBLIC: 1,
@@ -14,6 +13,7 @@ const STATUS = {
 const ROLE_RULES = {
     user: [
         [STATUS.DRAFT, STATUS.WANT_TO_VERIFY],
+        [STATUS.WANT_TO_VERIFY, STATUS.DRAFT],
         [STATUS.VERIFIED, STATUS.PUBLIC],
         [STATUS.PUBLIC, STATUS.DRAFT],
         [STATUS.REFUSE, STATUS.DRAFT],
@@ -28,43 +28,47 @@ const ROLE_RULES = {
     ),
 };
 
-function statusName(id) {
-    const entry = Object.entries(STATUS).find(([_, v]) => v === id);
-    return entry ? entry[0] : "Unknown";
-}
-
 /**
- * 🧩 Middleware kiểm tra quyền đổi trạng thái chương
+ * Middleware: kiểm tra quyền thay đổi trạng thái chapter
+ * Lấy chapterId từ params và newChapterStatusId từ params
  */
 exports.verifyChangeChapterStatus = async (req, res, next) => {
     try {
-        const { chapterId, newChapterStatusId } = req.body;
-        const role = req.user?.role;
+        const { chapterId, chapterStatusId } = req.params;
+        const accountId = req.user?.accountId;
 
-        if (!chapterId || !newChapterStatusId) {
-            return res.status(400).json({
-                message: "Thiếu thông tin chapterId hoặc newChapterStatusId",
-            });
+        if (!chapterId || !chapterStatusId) {
+            return res.status(400).json({ message: "Thiếu chapterId hoặc chapterStatusId" });
         }
 
-        // 🔍 Lấy trạng thái hiện tại từ DB
+        // Lấy role của user từ DB
+        const roleResult = await pool.query(
+            'SELECT r."roleName" AS role FROM "account" a JOIN "role" r ON a."roleId"=r."roleId" WHERE a."accountId"=$1',
+            [accountId]
+        );
+        if (!roleResult.rows.length) {
+            return res.status(403).json({ message: "Không tìm thấy vai trò của user" });
+        }
+        const role = roleResult.rows[0].role.toLowerCase(); // 'user', 'moderator', 'admin'
+
+        // Lấy trạng thái hiện tại
         const result = await pool.query(
-            `SELECT "chapterStatusId" FROM "chapter" WHERE "chapterId" = $1`,
+            `SELECT "chapterStatusId" AS "currentChapterStatus"
+             FROM "chapter"
+             WHERE "chapterId" = $1`,
             [chapterId]
         );
-
-        if (result.rows.length === 0) {
-            return res.status(404).json({ message: "Không tìm thấy chương" });
+        if (!result.rows.length) {
+            return res.status(404).json({ message: "Chương không tồn tại" });
         }
 
-        const oldStatus = result.rows[0].chapterStatusId;
-        const newStatus = Number(newChapterStatusId);
+        const { currentChapterStatus } = result.rows[0];
+        const oldStatus = currentChapterStatus;
+        const newStatus = Number(chapterStatusId);
         const rules = ROLE_RULES[role];
 
         if (!rules) {
-            return res.status(403).json({
-                message: "Vai trò không hợp lệ hoặc không có quyền thay đổi trạng thái",
-            });
+            return res.status(403).json({ message: "Vai trò không hợp lệ hoặc không có quyền thay đổi trạng thái này" });
         }
 
         const valid = rules.some(([from, to]) => from === oldStatus && to === newStatus);
@@ -82,4 +86,44 @@ exports.verifyChangeChapterStatus = async (req, res, next) => {
     }
 };
 
-exports.STATUS = STATUS;
+
+
+function statusName(id) {
+    const entry = Object.entries(STATUS).find(([_, v]) => v === id);
+    return entry ? entry[0] : "Unknown";
+}
+
+
+// middleware/chapterStatusAccess.js
+exports.uploaderAccess = async (req, res, next) => {
+    try {
+        const { accountId } = req.user;
+        // chỉ lấy các chapter thuộc novel do user sở hữu
+        req.chapterFilter = {
+            where: `"novel_info"."accountId" = ${accountId}`
+        };
+        next();
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Lỗi server' });
+    }
+};
+
+exports.moderatorAccess = async (req, res, next) => {
+    try {
+        const statusIds = ROLE_RULES.moderator.flatMap(([from, to]) => [from, to]);
+        req.chapterFilter = {
+            where: `"chapter"."chapterStatusId" = ANY(ARRAY[${statusIds.join(',')}])`
+        };
+        next();
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Lỗi server' });
+    }
+};
+
+exports.adminAccess = async (req, res, next) => {
+    // admin lấy tất cả chapter
+    req.chapterFilter = {}; // không cần where
+    next();
+};

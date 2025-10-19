@@ -222,66 +222,66 @@ var router = express.Router();
  */
 
 
-/**
- * @swagger
- * /chapter/{chapterId}/status/{chapterStatusId}:
- *   put:
- *     summary: Thay đổi trạng thái chương truyện
- *     description: |
- *       1. API cho phép người dùng **chủ sở hữu của chương** thay đổi trạng thái.<br>
- *       2. Chỉ người đăng chương (uploader) mới được phép đổi trạng thái.<br>
- *       3. JWT token phải được gửi trong header `Authorization` (Bearer token).<br>
- *       4. ChapterId và ChapterStatusId được truyền qua đường dẫn.<br>
- *
- *       **Ví dụ:** `/chapter/10/status/2`
- *
- *     tags: [Chapter]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: path
- *         name: chapterId
- *         schema:
- *           type: integer
- *         required: true
- *         description: ID của chương muốn thay đổi trạng thái
- *       - in: path
- *         name: chapterStatusId
- *         schema:
- *           type: integer
- *         required: true
- *         description: ID trạng thái mới của chương
- *     responses:
- *       200:
- *         description: Thay đổi trạng thái thành công
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: true
- *                 message:
- *                   type: string
- *                   example: Trạng thái chương đã được cập nhật
- *       401:
- *         description: Token không hợp lệ hoặc chưa đăng nhập
- *       403:
- *         description: User không phải uploader
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: Bạn không có quyền thay đổi chương này
- *       404:
- *         description: Chương không tồn tại
- *       500:
- *         description: Lỗi server
- */
+// /**
+//  * @swagger
+//  * /chapter/{chapterId}/status/{chapterStatusId}:
+//  *   put:
+//  *     summary: Thay đổi trạng thái chương truyện
+//  *     description: |
+//  *       1. API cho phép người dùng **chủ sở hữu của chương** thay đổi trạng thái.<br>
+//  *       2. Chỉ người đăng chương (uploader) mới được phép đổi trạng thái.<br>
+//  *       3. JWT token phải được gửi trong header `Authorization` (Bearer token).<br>
+//  *       4. ChapterId và ChapterStatusId được truyền qua đường dẫn.<br>
+//  *
+//  *       **Ví dụ:** `/chapter/10/status/2`
+//  *
+//  *     tags: [Chapter]
+//  *     security:
+//  *       - bearerAuth: []
+//  *     parameters:
+//  *       - in: path
+//  *         name: chapterId
+//  *         schema:
+//  *           type: integer
+//  *         required: true
+//  *         description: ID của chương muốn thay đổi trạng thái
+//  *       - in: path
+//  *         name: chapterStatusId
+//  *         schema:
+//  *           type: integer
+//  *         required: true
+//  *         description: ID trạng thái mới của chương
+//  *     responses:
+//  *       200:
+//  *         description: Thay đổi trạng thái thành công
+//  *         content:
+//  *           application/json:
+//  *             schema:
+//  *               type: object
+//  *               properties:
+//  *                 success:
+//  *                   type: boolean
+//  *                   example: true
+//  *                 message:
+//  *                   type: string
+//  *                   example: Trạng thái chương đã được cập nhật
+//  *       401:
+//  *         description: Token không hợp lệ hoặc chưa đăng nhập
+//  *       403:
+//  *         description: User không phải uploader
+//  *         content:
+//  *           application/json:
+//  *             schema:
+//  *               type: object
+//  *               properties:
+//  *                 message:
+//  *                   type: string
+//  *                   example: Bạn không có quyền thay đổi chương này
+//  *       404:
+//  *         description: Chương không tồn tại
+//  *       500:
+//  *         description: Lỗi server
+//  */
 
 
 

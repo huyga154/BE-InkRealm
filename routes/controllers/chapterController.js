@@ -193,7 +193,7 @@ exports.putChangeChapterStatus = async (req, res) => {
     try {
         const { chapterId, chapterStatusId } = req.params;
 
-        // Kiểm tra param
+        // Kiểm tra param hợp lệ
         if (!chapterId || isNaN(parseInt(chapterId))) {
             return res.status(400).json({ message: "chapterId không hợp lệ" });
         }
@@ -201,8 +201,12 @@ exports.putChangeChapterStatus = async (req, res) => {
             return res.status(400).json({ message: "chapterStatusId không hợp lệ" });
         }
 
+        // Cập nhật trạng thái
         const result = await pool.query(
-            'UPDATE "chapter" SET "chapterStatusId"=$1, "updateDate"=NOW() WHERE "chapterId"=$2 RETURNING "chapterId"',
+            `UPDATE "chapter"
+             SET "chapterStatusId" = $1, "updateDate" = NOW()
+             WHERE "chapterId" = $2
+             RETURNING "chapterId", "chapterStatusId"`,
             [chapterStatusId, chapterId]
         );
 
@@ -210,9 +214,15 @@ exports.putChangeChapterStatus = async (req, res) => {
             return res.status(404).json({ message: "Chương không tồn tại" });
         }
 
-        res.json({ success: true, message: "Trạng thái chương đã được cập nhật" });
+        res.json({
+            success: true,
+            message: "Trạng thái chapter đã được cập nhật",
+            chapter: result.rows[0]
+        });
+
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: "Lỗi server" });
+        console.error("putChangeChapterStatus error:", err);
+        res.status(500).json({ message: "Lỗi server khi cập nhật trạng thái chapter" });
     }
 };
+
