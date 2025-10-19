@@ -141,7 +141,7 @@ const router = express.Router();
  * @swagger
  * /uploader/chapter-status:
  *   get:
- *     summary: Lấy danh sách chapter mà uploader có quyền truy cập
+ *     summary: Lấy danh sách chapter status mà uploader có quyền truy cập
  *     tags: [ChapterStatus]
  *     security:
  *       - bearerAuth: []
@@ -183,7 +183,7 @@ const router = express.Router();
  * @swagger
  * /moderator/chapter-status:
  *   get:
- *     summary: Lấy danh sách chapter theo quyền moderator
+ *     summary: Lấy danh sách chapter status theo quyền moderator
  *     tags: [ChapterStatus]
  *     security:
  *       - bearerAuth: []
@@ -228,7 +228,7 @@ const router = express.Router();
  * @swagger
  * /admin/chapter-status:
  *   get:
- *     summary: Lấy danh sách chapter theo quyền admin
+ *     summary: Lấy danh sách chapter status theo quyền admin
  *     tags: [ChapterStatus]
  *     security:
  *       - bearerAuth: []
