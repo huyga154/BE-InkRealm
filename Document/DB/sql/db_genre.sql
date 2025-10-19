@@ -63,3 +63,12 @@ ON CONFLICT ("genreName") DO NOTHING;
 INSERT INTO "genre" ("genreName", "genreDescription") VALUES
     ('Trò chơi sinh tử', 'Nhân vật phải tham gia vào các trò chơi nguy hiểm, thử thách sinh tử với luật lệ nghiêm ngặt. Người thua sẽ mất mạng hoặc gặp hậu quả nặng nề, nhân vật phải vận dụng trí tuệ, chiến lược, kỹ năng và may mắn để sống sót. Thể loại thường tạo cảm giác căng thẳng, hồi hộp và kịch tính cao.')
 ON CONFLICT ("genreName") DO NOTHING;
+
+INSERT INTO "genre" ("genreName", "genreDescription") VALUES
+                                                          ('Chủ nghĩa Mác-Lênin', 'Truyện khai thác các lý thuyết, triết lý và tư tưởng của Chủ nghĩa Mác-Lênin.'),
+                                                          ('Chủ nghĩa cộng sản', 'Truyện khai thác các lý thuyết, triết lý và tư tưởng của Chủ nghĩa cộng sản.'),
+                                                          ('Triều đại phong kiến', 'Truyện đặt bối cảnh trong các triều đại phong kiến, với các vua, quan lại, cung đình, âm mưu chính trị, quyền lực gia tộc và xã hội phong kiến. Nhấn mạnh đấu trí, quyền lực, truyền thống và luật lệ thời phong kiến.'),
+                                                          ('Khởi nghĩa', 'Nhân vật tham gia các phong trào khởi nghĩa, nổi dậy, đấu tranh chống áp bức hoặc chiến đấu cho tự do, độc lập. Thể loại nhấn mạnh chiến lược, mưu lược, lãnh đạo và tinh thần đoàn kết.'),
+                                                          ('Tự hào dân tộc', 'Truyện truyền tải tinh thần yêu nước, tự hào dân tộc, tôn vinh văn hóa, lịch sử và truyền thống dân tộc Việt Nam. Nhấn mạnh bản sắc dân tộc và sự đóng góp của nhân vật vào lịch sử.'),
+                                                          ('Văn hóa Việt Nam', 'Khám phá phong tục, lễ hội, truyền thống, triết lý sống và các giá trị văn hóa đặc trưng của Việt Nam. Có thể bao gồm đời sống thường nhật, gia đình, lễ nghi và các yếu tố xã hội Việt Nam.')
+ON CONFLICT ("genreName") DO NOTHING;
