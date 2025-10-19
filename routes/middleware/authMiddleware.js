@@ -1,29 +1,7 @@
 const jwt = require("jsonwebtoken");
+const pool = require("../config/db");
 require("dotenv").config();
 
-exports.verifyToken = (req, res, next) => {
-    try {
-        const authHeader = req.headers.authorization;
-        if (!authHeader || !authHeader.startsWith("Bearer ")) {
-            return res.status(401).json({ message: "Chưa đăng nhập" });
-        }
-
-        const token = authHeader.split(" ")[1];
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.user = decoded;
-        next();
-    } catch (err) {
-        if (err.name === "TokenExpiredError") {
-            return res.status(401).json({ message: "Token hết hạn, vui lòng đăng nhập lại" });
-        }
-        return res.status(401).json({ message: "Token không hợp lệ" });
-    }
-};
-
-
-/**
- * Helper: Lấy roleId thật từ database
- */
 const getUserRoleFromDB = async (accountId) => {
     const result = await pool.query(
         'SELECT "roleId" FROM "account" WHERE "accountId" = $1',
@@ -33,9 +11,23 @@ const getUserRoleFromDB = async (accountId) => {
     return result.rows[0].roleId;
 };
 
-/**
- * Middleware: chỉ cho phép Moderator hoặc Admin
- */
+exports.verifyToken = (req, res, next) => {
+    try {
+        const authHeader = req.headers.authorization;
+        if (!authHeader || !authHeader.startsWith("Bearer ")) {
+            return res.status(401).json({ message: "Chưa đăng nhập" });
+        }
+
+        const token = authHeader.split(" ")[1];
+        req.user = jwt.verify(token, process.env.JWT_SECRET);
+        next();
+    } catch (err) {
+        if (err.name === "TokenExpiredError") {
+            return res.status(401).json({ message: "Token hết hạn, vui lòng đăng nhập lại" });
+        }
+        return res.status(401).json({ message: "Token không hợp lệ" });
+    }
+};
 exports.verifyModeratorOrAdmin = async (req, res, next) => {
     try {
         const { accountId } = req.user;
@@ -49,10 +41,6 @@ exports.verifyModeratorOrAdmin = async (req, res, next) => {
         res.status(500).json({ message: "Lỗi server khi kiểm tra quyền" });
     }
 };
-
-/**
- * Middleware: chỉ cho phép Admin
- */
 exports.verifyAdmin = async (req, res, next) => {
     try {
         const { accountId } = req.user;

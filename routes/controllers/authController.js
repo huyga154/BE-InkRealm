@@ -6,8 +6,8 @@ const sendMail = require("../utils/sendEmail");
 require("dotenv").config();
 
 // 🔹 Helper: Tạo JWT
-const signToken = ({accountId,roleId}) => {
-    return jwt.sign({ accountId,roleId }, process.env.JWT_SECRET, {
+const signToken = (accountId) => {
+    return jwt.sign({accountId}, process.env.JWT_SECRET, {
         expiresIn: process.env.JWT_EXPIRES_IN,
     });
 };

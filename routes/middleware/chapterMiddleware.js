@@ -1,10 +1,5 @@
 const pool = require("../config/db");
 
-/**
- * Middleware: kiểm tra user có quyền đổi trạng thái chương không
- * - Yêu cầu: đã có verifyToken chạy trước (để gán req.user.accountId)
- * - Nếu chương không thuộc truyện của user -> 403
- */
 exports.verifyUploader = async (req, res, next) => {
     try {
         const { chapterId } = req.params;
