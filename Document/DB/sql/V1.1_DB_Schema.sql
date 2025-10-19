@@ -159,3 +159,35 @@ ALTER TABLE account
 
 ALTER TABLE "transaction_history"
     ALTER COLUMN "coin_change" TYPE VARCHAR(25);
+
+
+-- =========================================
+-- 🧩 5. Bảng ROLE (phân quyền tài khoản)
+-- =========================================
+CREATE TABLE IF NOT EXISTS "role" (
+                                      "roleId" SERIAL PRIMARY KEY,
+                                      "roleName" VARCHAR(100) UNIQUE NOT NULL,
+                                      "roleDescription" TEXT
+);
+
+-- Chèn các role mặc định
+INSERT INTO "role" ("roleId", "roleName", "roleDescription") VALUES
+                                                                 (1, 'USER', 'Người dùng thông thường'),
+                                                                 (2, 'ADMIN', 'Quản trị viên hệ thống'),
+                                                                 (3, 'MODERATOR', 'Người kiểm duyệt nội dung')
+ON CONFLICT ("roleId") DO NOTHING;
+
+-- =========================================
+-- 🔗 6. Thêm cột roleId vào bảng account
+-- =========================================
+ALTER TABLE "account"
+    ADD COLUMN IF NOT EXISTS "roleId" INTEGER DEFAULT 1,
+    ADD CONSTRAINT fk_account_role FOREIGN KEY ("roleId")
+        REFERENCES "role" ("roleId")
+        ON DELETE SET DEFAULT;
+
+-- =========================================
+-- ⚡ 7. Index tối ưu truy vấn theo role
+-- =========================================
+CREATE INDEX IF NOT EXISTS idx_account_roleId
+    ON "account"("roleId");

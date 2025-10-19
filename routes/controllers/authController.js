@@ -6,8 +6,8 @@ const sendMail = require("../utils/sendEmail");
 require("dotenv").config();
 
 // 🔹 Helper: Tạo JWT
-const signToken = (accountId) => {
-    return jwt.sign({ accountId }, process.env.JWT_SECRET, {
+const signToken = ({accountId,roleId}) => {
+    return jwt.sign({ accountId,roleId }, process.env.JWT_SECRET, {
         expiresIn: process.env.JWT_EXPIRES_IN,
     });
 };
@@ -81,7 +81,7 @@ exports.login = async (req, res) => {
             return res.status(400).json({ message: "Sai tên đăng nhập hoặc mật khẩu" });
         }
 
-        const token = signToken(user.accountId);
+        const token = signToken(user.accountId , user.roleId);
 
         res.json({
             message: "Đăng nhập thành công",
@@ -179,3 +179,4 @@ exports.resetPassword = async(req,res) => {
     }
 
 }
+

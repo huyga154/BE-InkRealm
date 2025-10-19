@@ -1,10 +1,10 @@
 // api_register.js
-const indexRouter = require("../../index");
-const testdbRouter = require("./user/testdb");
-const novelRouter = require("./user/novel_api");
-const chapterRouter = require("./user/chapter_api");
-const authRouter = require("./user/auth_api");
-const cassoRouter = require("./user/payment_api");
+const indexRouter = require("../index");
+const testdbRouter = require("./api/test");
+const novelRouter = require("./api/novel_api");
+const chapterRouter = require("./api/chapter_api");
+const authRouter = require("./api/auth_api");
+const cassoRouter = require("./api/payment_api");
 
 module.exports = (app) => {
     // Đăng ký tất cả route tại đây

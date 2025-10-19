@@ -1,15 +1,15 @@
 var express = require('express');
 var router = express.Router();
-const pool = require("../../../config/db");
-const { verifyToken } = require("../../../middleware/authMiddleware");
+const pool = require("../../config/db");
+const { verifyToken } = require("../../middleware/authMiddleware");
 const {
     getChapterList,
     postAddNewChapter,
     getChapterText,
     getChapterDetail,
     putChangeChapterStatus
-        } = require("../../../controllers/chapterController");
-const { verifyUploader } = require("../../../middleware/chapterMiddleware");
+        } = require("../../controllers/chapterController");
+const { verifyUploader } = require("../../middleware/chapterMiddleware");
 
 router.get("/list", getChapterList);
 router.post("/add", postAddNewChapter);
