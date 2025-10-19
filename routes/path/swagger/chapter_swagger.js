@@ -12,42 +12,54 @@ var router = express.Router();
 
 /**
  * @swagger
- * /chapter/list:
+ * /chapter/list/{novelId}:
  *   get:
  *     summary: Lấy danh sách chapter theo novelId
+ *     description: Trả về danh sách các chapter của một novel dựa vào path parameter. Bao gồm ID chapter, tiêu đề, thứ tự, trạng thái, ngày tạo và ngày cập nhật.
  *     tags: [Chapter]
  *     parameters:
- *       - in: query
+ *       - in: path
  *         name: novelId
  *         required: true
  *         schema:
  *           type: integer
  *           example: 1
- *         description: ID của novel
+ *         description: ID của novel muốn lấy chapter
  *     responses:
  *       200:
- *         description: Danh sách chapter
+ *         description: Danh sách chapter thành công
  *         content:
  *           application/json:
  *             schema:
- *               type: array
- *               items:
- *                 type: object
- *                 properties:
- *                   chapterId:
- *                     type: integer
- *                   chapterTitle:
- *                     type: string
- *                   chapterIndex:
- *                     type: number
- *                   createDate:
- *                     type: string
- *                     format: date-time
- *                   updateDate:
- *                     type: string
- *                     format: date-time
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 novelId:
+ *                   type: integer
+ *                   example: 1
+ *                 chapters:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       chapterId:
+ *                         type: integer
+ *                       chapterTitle:
+ *                         type: string
+ *                       chapterIndex:
+ *                         type: number
+ *                       chapterStatusId:
+ *                         type: integer
+ *                       createDate:
+ *                         type: string
+ *                         format: date-time
+ *                       updateDate:
+ *                         type: string
+ *                         format: date-time
  *       400:
- *         description: Thiếu novelId
+ *         description: Thiếu hoặc sai novelId
  *       500:
  *         description: Lỗi server
  */

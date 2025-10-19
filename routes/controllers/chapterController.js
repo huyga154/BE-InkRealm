@@ -5,28 +5,32 @@ const {log} = require("debug");
 const sendMail = require("../utils/sendEmail");
 require("dotenv").config();
 
-exports.getChapterList = async (req,res) => {
+exports.getChapterList = async (req, res) => {
     try {
-        const { novelId } = req.query; // lấy từ query param ?novelId=1
+        const { novelId } = req.params; // lấy từ path param /chapter/list/:novelId
 
-        if (!novelId) {
-            return res.status(400).json({ error: "Thiếu novelId trong query" });
+        if (!novelId || isNaN(parseInt(novelId))) {
+            return res.status(400).json({ error: "Thiếu hoặc không hợp lệ novelId" });
         }
 
         const result = await pool.query(
-            `SELECT "chapterId", "chapterTitle", "chapterIndex", "createDate", "updateDate"
-             FROM chapter
-             WHERE "novelId" = $1 AND "chapterStatusId" = 2
+            `SELECT "chapterId", "chapterTitle", "chapterIndex", "createDate", "updateDate", "chapterStatusId"
+             FROM "chapter"
+             WHERE "novelId" = $1
              ORDER BY "chapterIndex" ASC`,
             [novelId]
         );
 
-        res.json(result.rows);
+        res.status(200).json({
+            success: true,
+            novelId: Number(novelId),
+            chapters: result.rows
+        });
     } catch (err) {
         console.error("❌ Lỗi khi lấy danh sách chapter theo novelId:", err.message);
-        res.status(500).json({ error: "Không tìm thấy danh sách chapter" });
+        res.status(500).json({ error: "Không lấy được danh sách chapter" });
     }
-}
+};
 
 exports.postAddNewChapter = async (req, res) => {
     try {
