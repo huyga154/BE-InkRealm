@@ -1,8 +1,5 @@
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
 const pool = require("../config/db");
-const {log} = require("debug");
-const sendMail = require("../utils/sendEmail");
+const chapterService = require("../service/chapterService");
 require("dotenv").config();
 
 exports.getChapterList = async (req, res) => {
@@ -228,7 +225,8 @@ exports.putChangeChapterStatus = async (req, res) => {
 
 exports.putUpdateChapterText = async (req, res) => {
     try {
-        const { chapterId, chapterText } = req.body;
+        const { chapterId} = req.params;
+        const { chapterText } = req.body;
 
         // ✅ Kiểm tra đầu vào
         if (!chapterId || isNaN(chapterId)) {
@@ -265,6 +263,80 @@ exports.putUpdateChapterText = async (req, res) => {
     }
 };
 
+exports.setChapterPrice = async (req, res) => {
+    const { chapterId } = req.params;
+    const { price } = req.body;
 
+    // Kiểm tra đầu vào
+    if (price == null || isNaN(price) || price < 0) {
+        return res.status(400).json({ message: "Giá chương không hợp lệ" });
+    }
 
+    try {
+        const result = await pool.query(
+            `UPDATE "chapter" 
+       SET "price" = $1 
+       WHERE "chapterId" = $2
+       RETURNING "chapterId", "price"`,
+            [price, chapterId]
+        );
 
+        if (result.rowCount === 0) {
+            return res.status(404).json({ message: "Không tìm thấy chương" });
+        }
+
+        res.json({
+            message: "Cập nhật giá chương thành công",
+            chapter: result.rows[0],
+        });
+    } catch (err) {
+        console.error("❌ Lỗi khi cập nhật giá chương:", err);
+        res.status(500).json({ message: "Lỗi server khi cập nhật giá chương" });
+    }
+};
+
+exports.buyChapter = async (req, res) => {
+    const { chapterId } = req.params;
+    const accountId = req.user?.accountId;
+    const client = req.trxClient;
+
+    if (!chapterId || isNaN(chapterId)) return res.status(400).json({ message: "chapterId không hợp lệ" });
+    if (!accountId) return res.status(401).json({ message: "Không xác thực được tài khoản" });
+
+    try {
+        // 🔹 Lấy thông tin chương
+        const chapter = await chapterService.getChapterWithUploader(client, chapterId);
+        if (!chapter) return res.status(404).json({ message: "Không tìm thấy chương" });
+
+        const { price, uploaderId } = chapter;
+
+        // 🔹 Kiểm tra giá và quyền mua
+        if (!price || price <= 0) return res.status(400).json({ message: "Chương miễn phí" });
+        if (uploaderId === accountId) return res.status(400).json({ message: "Không thể mua chương của chính mình" });
+
+        // 🔹 Kiểm tra đã mua chưa
+        if (await chapterService.checkAlreadyPurchased(client, accountId, chapterId))
+            return res.status(400).json({ message: "Đã mua chương này" });
+
+        // 🔹 Kiểm tra số dư
+        const balance = await chapterService.getBalance(client, accountId);
+        if (balance === null) return res.status(404).json({ message: "Không tìm thấy tài khoản" });
+        if (balance < price) return res.status(400).json({ message: "Số dư không đủ" });
+
+        // 🔹 Thực hiện thanh toán
+        await chapterService.transferCoins(client, accountId, uploaderId, price);
+
+        // 🔹 Ghi transaction và purchase
+        const transactionId = await chapterService.createTransaction(client, accountId, chapterId, price);
+        await chapterService.recordChapterPurchase(client, accountId, chapterId, transactionId);
+
+        return res.status(200).json({
+            message: "Mua chương thành công",
+            data: { chapterId, price, buyerId: accountId, uploaderId, transactionId },
+        });
+
+    } catch (err) {
+        console.error("buyChapter error:", err);
+        return res.status(500).json({ message: "Lỗi khi mua chương" });
+    }
+};

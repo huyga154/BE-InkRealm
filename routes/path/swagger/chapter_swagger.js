@@ -222,44 +222,39 @@ var router = express.Router();
  */
 
 
+
 /**
  * @swagger
- * /chapter/text/update:
+ * /chapter/{chapterId}/text/update:
  *   put:
- *     summary: Cập nhật nội dung chương
- *     description: |
- *       API cho phép người đăng truyện chỉnh sửa nội dung chương.<br>
- *       Nếu chương đang ở trạng thái **public** hoặc trạng thái khác bất kỳ, hệ thống sẽ tự động chuyển về **draft** trước khi cập nhật.<br>
- *       Middleware sử dụng:<br>
- *       - <b>verifyToken</b>: xác thực người dùng.<br>
- *       - <b>verifyUploader</b>: kiểm tra người đăng truyện.<br>
- *       - <b>resetStatusToDraft</b>: tự động chuyển chương về draft.<br>
- *       - <b>putUpdateChapterText</b>: cập nhật nội dung chương.
  *     tags:
  *       - Chapter
- *     security:
- *       - bearerAuth: []
+ *     summary: Cập nhật nội dung chương
+ *     description: Người đăng chương cập nhật nội dung. Chương sẽ tự động chuyển trạng thái sang 'draft'.
+ *     parameters:
+ *       - name: chapterId
+ *         in: path
+ *         required: true
+ *         description: ID của chương cần cập nhật
+ *         schema:
+ *           type: integer
+ *           example: 123
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
  *             type: object
- *             required:
- *               - chapterId
- *               - chapterText
  *             properties:
- *               chapterId:
- *                 type: integer
- *                 example: 42
- *                 description: ID của chương cần chỉnh sửa.
  *               chapterText:
  *                 type: string
- *                 example: "Nội dung chương mới được chỉnh sửa..."
- *                 description: Nội dung chương sau khi cập nhật.
+ *                 description: Nội dung mới của chương
+ *                 example: "Nội dung chương đã được cập nhật..."
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: Cập nhật chương thành công.
+ *         description: Cập nhật thành công
  *         content:
  *           application/json:
  *             schema:
@@ -273,21 +268,177 @@ var router = express.Router();
  *                   properties:
  *                     chapterId:
  *                       type: integer
- *                       example: 42
+ *                       example: 123
+ *                     chapterTitle:
+ *                       type: string
+ *                       example: "Chương 1: Bắt đầu"
  *                     chapterText:
  *                       type: string
- *                       example: "Nội dung chương sau khi cập nhật..."
+ *                       example: "Nội dung chương đã được cập nhật..."
+ *                     updateDate:
+ *                       type: string
+ *                       format: date-time
+ *                       example: "2025-10-20T12:34:56.789Z"
  *       400:
- *         description: Thiếu dữ liệu yêu cầu (chapterId hoặc chapterText).
+ *         description: Thiếu hoặc sai định dạng đầu vào
  *       401:
- *         description: Người dùng chưa đăng nhập hoặc token không hợp lệ.
+ *         description: Không xác thực được người dùng
  *       403:
- *         description: Người dùng không phải uploader của truyện.
+ *         description: Người dùng không phải uploader
  *       404:
- *         description: Không tìm thấy chương cần cập nhật.
+ *         description: Không tìm thấy chương
  *       500:
- *         description: Lỗi máy chủ khi cập nhật chương.
+ *         description: Lỗi server
  */
+
+
+
+/**
+ * @swagger
+ * /uploader/{chapterId}/set-price:
+ *   put:
+ *     tags:
+ *       - Chapter
+ *     summary: Đặt giá cho chương
+ *     description: Người đăng chương đặt giá tiền cho chương. Chỉ uploader mới được thực hiện.
+ *     parameters:
+ *       - name: chapterId
+ *         in: path
+ *         required: true
+ *         description: ID của chương cần đặt giá
+ *         schema:
+ *           type: integer
+ *           example: 123
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               price:
+ *                 type: integer
+ *                 description: Giá của chương (coin)
+ *                 example: 50
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Đặt giá thành công
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Cập nhật giá chương thành công"
+ *                 price:
+ *                   type: integer
+ *                   example: 50
+ *       400:
+ *         description: Giá chương không hợp lệ
+ *       401:
+ *         description: Không xác thực được người dùng
+ *       403:
+ *         description: Người dùng không phải uploader
+ *       404:
+ *         description: Không tìm thấy chương
+ *       500:
+ *         description: Lỗi server
+ */
+
+
+
+/**
+ * @swagger
+ * /chapter/{chapterId}/buy:
+ *   post:
+ *     tags:
+ *       - Chapter
+ *     summary: Mua một chương truyện
+ *     description: Người dùng mua một chương. Sử dụng token để xác thực. Ghi nhận giao dịch và lịch sử mua.
+ *     parameters:
+ *       - name: chapterId
+ *         in: path
+ *         required: true
+ *         description: ID của chương cần mua
+ *         schema:
+ *           type: integer
+ *           example: 123
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Mua chương thành công
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Mua chương thành công"
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     chapterId:
+ *                       type: integer
+ *                       example: 123
+ *                     price:
+ *                       type: integer
+ *                       example: 50
+ *                     buyerId:
+ *                       type: integer
+ *                       example: 10
+ *                     uploaderId:
+ *                       type: integer
+ *                       example: 5
+ *                     transactionId:
+ *                       type: integer
+ *                       example: 789
+ *       400:
+ *         description: Lỗi do input hoặc điều kiện mua (số dư không đủ, đã mua, miễn phí, tự mua)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Số dư không đủ"
+ *       401:
+ *         description: Không xác thực được người dùng
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Không xác thực được tài khoản"
+ *       404:
+ *         description: Chương hoặc tài khoản không tồn tại
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Không tìm thấy chương"
+ *       500:
+ *         description: Lỗi server
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Lỗi khi mua chương"
+ */
+
 
 
 

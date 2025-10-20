@@ -38,7 +38,7 @@ exports.verifyUploader = async (req, res, next) => {
 
 exports.resetStatusToDraft = async (req, res, next) => {
     try {
-        const { chapterId } = req.body;
+        const { chapterId } = req.params;
 
         if (!chapterId) {
             return res.status(400).json({ message: "Thiếu chapterId trong request body" });

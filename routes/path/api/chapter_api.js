@@ -5,18 +5,33 @@ const {
     getChapterList,
     postAddNewChapter,
     getChapterText,
-    getChapterDetail, putUpdateChapterText
+    getChapterDetail,
+    putUpdateChapterText,
+    setChapterPrice, buyChapter
 } = require("../../controllers/chapterController");
-const { verifyUploader, resetStatusToDraft} = require("../../middleware/chapterMiddleware");
+const { verifyUploader, resetStatusToDraft}
+    = require("../../middleware/chapterMiddleware");
 
 router.get("/chapter/list/:novelId", getChapterList);
 router.post("/chapter/add", postAddNewChapter);
 router.get("/chapter/text", verifyToken, getChapterText);
 router.get("/chapter/detail", getChapterDetail);
-router.put("/chapter/text/update",
+
+router.put("/chapter/:chapterId/text/update",
     verifyToken,
     verifyUploader,
     resetStatusToDraft,
     putUpdateChapterText);
+
+router.put("/uploader/:chapterId/set-price",
+    verifyToken,
+    verifyUploader,
+    setChapterPrice);
+
+router.post(
+    "/chapter/:chapterId/buy",
+    verifyToken,
+    buyChapter
+);
 
 module.exports = router;
