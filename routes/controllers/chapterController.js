@@ -67,20 +67,22 @@ exports.postAddNewChapter = async (req, res) => {
     }
 };
 
-exports.getChapterText = async (req,res) => {
+exports.getChapterText = async (req, res) => {
     try {
         const { chapterId } = req.query;
-        const accountId = req.user.id; // lấy từ token
+        const accountId = req.user?.accountId; // lấy từ token
 
         if (!chapterId) {
             return res.status(400).json({ error: "Thiếu chapterId" });
         }
 
-        // 1️⃣ Lấy thông tin chương (bao gồm price và novelId)
+        // 1️⃣ Lấy thông tin chương (bao gồm price, novelId và uploader)
         const chapterResult = await pool.query(
-            `SELECT "chapterId", "novelId", "chapterText", "price"
-            FROM "chapter"
-            WHERE "chapterId" = $1`,
+            `SELECT c."chapterId", c."novelId", c."chapterText", c."price",
+                    n."accountId" AS "uploaderId"
+             FROM "chapter" c
+                      JOIN "novel_info" n ON c."novelId" = n."novelId"
+             WHERE c."chapterId" = $1`,
             [chapterId]
         );
 
@@ -95,16 +97,21 @@ exports.getChapterText = async (req,res) => {
             return res.json({ chapterText: chapter.chapterText });
         }
 
-        // 3️⃣ Kiểm tra user đã mua chương hoặc mua truyện chưa
+        // 3️⃣ Nếu người đọc là uploader → cho đọc luôn
+        if (chapter.uploaderId === accountId) {
+            return res.json({ chapterText: chapter.chapterText });
+        }
+
+        // 4️⃣ Kiểm tra user đã mua chương hoặc mua truyện chưa
         const [purchaseChapter, purchaseNovel] = await Promise.all([
             pool.query(
                 `SELECT 1 FROM "chapter_purchase"
-         WHERE "accountId" = $1 AND "chapterId" = $2`,
+                 WHERE "accountId" = $1 AND "chapterId" = $2`,
                 [accountId, chapterId]
             ),
             pool.query(
                 `SELECT 1 FROM "novel_purchase"
-         WHERE "accountId" = $1 AND "novelId" = $2`,
+                 WHERE "accountId" = $1 AND "novelId" = $2`,
                 [accountId, chapter.novelId]
             ),
         ]);
@@ -112,12 +119,12 @@ exports.getChapterText = async (req,res) => {
         const hasPurchasedChapter = purchaseChapter.rows.length > 0;
         const hasPurchasedNovel = purchaseNovel.rows.length > 0;
 
-        // 4️⃣ Nếu đã mua → cho đọc
+        // 5️⃣ Nếu đã mua → cho đọc
         if (hasPurchasedChapter || hasPurchasedNovel) {
             return res.json({ chapterText: chapter.chapterText });
         }
 
-        // 5️⃣ Nếu chưa mua → trả về thông báo và giá
+        // 6️⃣ Nếu chưa mua → trả về thông báo và giá
         return res.status(403).json({
             error: "Chương này cần mua để đọc",
             price: chapter.price,
@@ -127,7 +134,8 @@ exports.getChapterText = async (req,res) => {
         console.error("❌ Lỗi khi lấy data chapter:", err.message);
         res.status(500).json({ error: "Không thể lấy text của chapter" });
     }
-}
+};
+
 
 exports.getChapterDetail = async (req,res) => {
     try {
