@@ -136,7 +136,6 @@ exports.getChapterText = async (req, res) => {
     }
 };
 
-
 exports.getChapterDetail = async (req,res) => {
     try {
         const { chapterId } = req.query;
