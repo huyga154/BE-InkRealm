@@ -102,7 +102,7 @@ const router = express.Router();
  *           schema:
  *             type: object
  *             properties:
- *               storyId:
+ *               novelId:
  *                 type: integer
  *                 example: 1
  *     responses:
@@ -161,19 +161,20 @@ const router = express.Router();
  * /uploader/novel/upload-cover:
  *   post:
  *     summary: Upload ảnh bìa cho novel (cần đăng nhập)
- *     tags: [Novel]
+ *     tags: [Novels]
  *     security:
  *       - bearerAuth: []  # JWT token required
  *     description: >
  *       API cho phép upload ảnh bìa cho một tiểu thuyết.<br>
  *       Flow:<br>
- *       1. Người dùng gửi form-data gồm "novelId" và file "cover" cùng token JWT.<br>
+ *       1. Người dùng gửi form-data gồm "novelId" (text) và file "cover" cùng token JWT.<br>
  *       2. Server kiểm tra token hợp lệ.<br>
- *       3. Lấy ảnh bìa cũ từ DB.<br>
- *       4. Nếu ảnh cũ là Cloudinary, xóa ảnh cũ.<br>
- *       5. Upload ảnh mới lên Cloudinary.<br>
- *       6. Cập nhật URL ảnh mới vào DB.<br>
- *       7. Trả về URL ảnh bìa mới.
+ *       3. Kiểm tra user có quyền sở hữu novel.<br>
+ *       4. Lấy ảnh bìa cũ từ DB.<br>
+ *       5. Nếu ảnh cũ là Cloudinary, xóa ảnh cũ.<br>
+ *       6. Resize ảnh về 300x400 và upload lên Cloudinary.<br>
+ *       7. Cập nhật URL ảnh mới vào DB.<br>
+ *       8. Trả về URL ảnh bìa mới.
  *     requestBody:
  *       required: true
  *       content:
@@ -182,12 +183,13 @@ const router = express.Router();
  *             type: object
  *             properties:
  *               novelId:
- *                 type: integer
- *                 description: ID của novel cần upload cover
- *                 example: 123
+ *                 type: string
+ *                 description: ID của novel cần upload cover (text field trong form-data)
+ *                 example: "123"
  *               cover:
  *                 type: string
  *                 format: binary
+ *                 description: File ảnh cover (file field trong form-data)
  *     responses:
  *       200:
  *         description: Upload cover thành công
@@ -204,10 +206,36 @@ const router = express.Router();
  *                   example: "https://res.cloudinary.com/.../cover.png"
  *       400:
  *         description: Thiếu novelId hoặc file
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Thiếu novelId"
  *       401:
  *         description: Token không hợp lệ hoặc hết hạn
+ *       403:
+ *         description: Người dùng không phải là chủ sở hữu novel
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Bạn không có quyền chỉnh sửa novel này"
  *       500:
  *         description: Lỗi server
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Lỗi upload cover"
  */
 
 module.exports = router;

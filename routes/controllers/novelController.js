@@ -12,15 +12,15 @@ exports.postGetAllNovel = async (req,res) => {
 
 exports.postGetNovelByNovelId = async (req,res) => {
     try {
-        const { storyId } = req.body;
+        const { novelId } = req.body;
 
-        if (!storyId) {
+        if (!novelId) {
             return res.status(400).json({ error: "Thiếu id trong request body" });
         }
 
         const result = await pool.query(
             `SELECT * FROM novel_info WHERE "novelId" = $1`,
-            [storyId]
+            [novelId]
         );
 
         if (result.rows.length === 0) {

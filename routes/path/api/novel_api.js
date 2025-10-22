@@ -9,10 +9,11 @@ const {
 } = require("../../controllers/novelController");
 const {verifyToken} = require("../../middleware/authMiddleware");
 const {uploadCover} = require("../../controllers/imageController");
+const {checkNovelOwner} = require("../../middleware/novelMiddleware");
 
 router.post("/novel/all", postGetAllNovel);
 router.post("/novel/novelId", postGetNovelByNovelId);
 router.post("/uploader/novel/create", verifyToken, postCreateNovel);
-router.post("uploader/novel/upload-cover", verifyToken, upload.single("cover"), uploadCover);
+router.post("/uploader/novel/upload-cover", verifyToken, upload.single("cover"),checkNovelOwner, uploadCover);
 
 module.exports = router;
