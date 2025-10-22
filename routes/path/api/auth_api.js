@@ -4,7 +4,8 @@ const { register, login, getProfile, changePassword, resetPassword} = require(".
 const { verifyToken } = require("../../middleware/authMiddleware");
 const {uploadAvatar} = require("../../controllers/imageController");
 const multer = require("multer");
-const upload = multer({ dest: "uploads/" });
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
 
 router.post("/auth/register", register);
 router.post("/auth/login", login);
