@@ -156,4 +156,58 @@ const router = express.Router();
  *         description: Lỗi server
  */
 
+/**
+ * @swagger
+ * /uploader/novel/upload-cover:
+ *   post:
+ *     summary: Upload ảnh bìa cho novel (cần đăng nhập)
+ *     tags: [Novel]
+ *     security:
+ *       - bearerAuth: []  # JWT token required
+ *     description: >
+ *       API cho phép upload ảnh bìa cho một tiểu thuyết.<br>
+ *       Flow:<br>
+ *       1. Người dùng gửi form-data gồm "novelId" và file "cover" cùng token JWT.<br>
+ *       2. Server kiểm tra token hợp lệ.<br>
+ *       3. Lấy ảnh bìa cũ từ DB.<br>
+ *       4. Nếu ảnh cũ là Cloudinary, xóa ảnh cũ.<br>
+ *       5. Upload ảnh mới lên Cloudinary.<br>
+ *       6. Cập nhật URL ảnh mới vào DB.<br>
+ *       7. Trả về URL ảnh bìa mới.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               novelId:
+ *                 type: integer
+ *                 description: ID của novel cần upload cover
+ *                 example: 123
+ *               cover:
+ *                 type: string
+ *                 format: binary
+ *     responses:
+ *       200:
+ *         description: Upload cover thành công
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Cập nhật ảnh bìa thành công"
+ *                 coverUrl:
+ *                   type: string
+ *                   example: "https://res.cloudinary.com/.../cover.png"
+ *       400:
+ *         description: Thiếu novelId hoặc file
+ *       401:
+ *         description: Token không hợp lệ hoặc hết hạn
+ *       500:
+ *         description: Lỗi server
+ */
+
 module.exports = router;

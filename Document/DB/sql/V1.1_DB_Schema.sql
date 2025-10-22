@@ -192,3 +192,8 @@ ALTER TABLE "account"
 CREATE INDEX IF NOT EXISTS idx_account_roleId
     ON "account"("roleId");
 
+-- =========================================
+-- 🖼️ Thêm cột "novel_img_url" vào bảng novel_info
+-- =========================================
+ALTER TABLE "novel_info"
+    ADD COLUMN IF NOT EXISTS "novel_img_url" TEXT;

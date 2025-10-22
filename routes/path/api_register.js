@@ -13,7 +13,7 @@ module.exports = (app) => {
     app.use("/", testdbRouter);
     app.use("/", novelRouter);
     app.use("/", chapterRouter);
-    app.use("/auth", authRouter);
+    app.use("/", authRouter);
     app.use("/payment", cassoRouter);
     app.use("/",chapterStatusRouter)
 };
