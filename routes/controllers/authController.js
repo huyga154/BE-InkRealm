@@ -91,6 +91,7 @@ exports.login = async (req, res) => {
                 username: user.username,
                 fullName: user.fullName,
                 avatar: user.avatar,
+                roleId: user.roleId,
                 coin: user.coin,
             },
         });
