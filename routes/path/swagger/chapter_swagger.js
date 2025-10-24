@@ -440,7 +440,96 @@ var router = express.Router();
  */
 
 
+/**
+ * @swagger
+ * /chapter/list/{chapterStatusId}:
+ *   get:
+ *     summary: Lấy danh sách chapter theo chapterStatusId
+ *     description: Lấy tất cả chapter có trạng thái nhất định, không kiểm tra role
+ *     tags:
+ *       - Chapter
+ *     parameters:
+ *       - in: path
+ *         name: chapterStatusId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID của trạng thái chapter
+ *     responses:
+ *       200:
+ *         description: Thành công, trả về danh sách chapter
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   chapterId:
+ *                     type: integer
+ *                   chapterTitle:
+ *                     type: string
+ *                   chapterIndex:
+ *                     type: integer
+ *                   chapterStatusId:
+ *                     type: integer
+ *                   chapterStatusCode:
+ *                     type: string
+ *                   chapterStatusDescription:
+ *                     type: string
+ *                   novelId:
+ *                     type: integer
+ *                   novelTitle:
+ *                     type: string
+ *       400:
+ *         description: Thiếu hoặc không hợp lệ chapterStatusId
+ *       500:
+ *         description: Lỗi server khi lấy danh sách chapter
+ */
 
+
+/**
+ * @swagger
+ * /moderator/chapter/text/{chapterId}:
+ *   get:
+ *     summary: Lấy nội dung chapter theo chapterId
+ *     description: Lấy text của chapter, cần quyền moderator hoặc admin
+ *     tags:
+ *       - Chapter
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: chapterId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID của chapter
+ *     responses:
+ *       200:
+ *         description: Thành công, trả về nội dung chapter
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 chapterId:
+ *                   type: integer
+ *                 chapterTitle:
+ *                   type: string
+ *                 chapterText:
+ *                   type: string
+ *                 novelId:
+ *                   type: integer
+ *       400:
+ *         description: Thiếu hoặc không hợp lệ chapterId
+ *       403:
+ *         description: Không có quyền truy cập
+ *       404:
+ *         description: Chapter không tồn tại
+ *       500:
+ *         description: Lỗi server khi lấy nội dung chapter
+ */
 
 
 module.exports = router;

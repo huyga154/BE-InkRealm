@@ -347,3 +347,66 @@ exports.buyChapter = async (req, res) => {
         return res.status(500).json({ message: "Lỗi khi mua chương" });
     }
 };
+
+exports.getChaptersByStatusId = async (req, res) => {
+    try {
+        // Lấy chapterStatusId từ params
+        const { chapterStatusId } = req.params;
+
+        // Chuyển về number
+        const statusIdNum = Number(chapterStatusId);
+        if (!statusIdNum) {
+            return res.status(400).json({ message: "Thiếu hoặc không hợp lệ chapterStatusId" });
+        }
+
+        const result = await pool.query(`
+            SELECT
+                "chapter"."chapterId",
+                "chapter"."chapterTitle",
+                "chapter"."chapterIndex",
+                "chapter_status"."chapterStatusId",
+                "chapter_status"."chapterStatusCode",
+                "chapter_status"."chapterStatusDescription",
+                "novel_info"."novelId",
+                "novel_info"."novelTitle"
+            FROM "chapter"
+                     JOIN "chapter_status"
+                          ON "chapter"."chapterStatusId" = "chapter_status"."chapterStatusId"
+                     JOIN "novel_info"
+                          ON "chapter"."novelId" = "novel_info"."novelId"
+            WHERE "chapter_status"."chapterStatusId" = $1
+            ORDER BY "chapter"."chapterIndex" ASC
+        `, [statusIdNum]);
+
+        res.json(result.rows);
+    } catch (err) {
+        console.error("getChaptersByStatusId error:", err);
+        res.status(500).json({ message: "Lỗi server khi lấy danh sách chapter" });
+    }
+};
+
+exports.getChapterTextById = async (req, res) => {
+    try {
+        const chapterId = Number(req.params.chapterId);
+        if (!chapterId) return res.status(400).json({ message: "Thiếu chapterId" });
+
+        const result = await pool.query(`
+            SELECT 
+                "chapterId",
+                "chapterTitle",
+                "chapterText",
+                "novelId"
+            FROM "chapter"
+            WHERE "chapterId" = $1
+        `, [chapterId]);
+
+        if (!result.rows.length) {
+            return res.status(404).json({ message: "Chapter không tồn tại" });
+        }
+
+        res.json(result.rows[0]);
+    } catch (err) {
+        console.error("getChapterTextById error:", err);
+        res.status(500).json({ message: "Lỗi server khi lấy nội dung chapter" });
+    }
+};
