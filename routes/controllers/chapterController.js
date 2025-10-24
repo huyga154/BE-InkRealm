@@ -350,10 +350,7 @@ exports.buyChapter = async (req, res) => {
 
 exports.getChaptersByStatusId = async (req, res) => {
     try {
-        // Lấy chapterStatusId từ params
         const { chapterStatusId } = req.params;
-
-        // Chuyển về number
         const statusIdNum = Number(chapterStatusId);
         if (!statusIdNum) {
             return res.status(400).json({ message: "Thiếu hoặc không hợp lệ chapterStatusId" });
@@ -361,24 +358,46 @@ exports.getChaptersByStatusId = async (req, res) => {
 
         const result = await pool.query(`
             SELECT
-                "chapter"."chapterId",
-                "chapter"."chapterTitle",
-                "chapter"."chapterIndex",
-                "chapter_status"."chapterStatusId",
-                "chapter_status"."chapterStatusCode",
-                "chapter_status"."chapterStatusDescription",
-                "novel_info"."novelId",
-                "novel_info"."novelTitle"
-            FROM "chapter"
-                     JOIN "chapter_status"
-                          ON "chapter"."chapterStatusId" = "chapter_status"."chapterStatusId"
-                     JOIN "novel_info"
-                          ON "chapter"."novelId" = "novel_info"."novelId"
-            WHERE "chapter_status"."chapterStatusId" = $1
-            ORDER BY "chapter"."chapterIndex" ASC
+                c."chapterId",
+                c."chapterTitle",
+                c."chapterIndex",
+                cs."chapterStatusId",
+                cs."chapterStatusCode",
+                cs."chapterStatusDescription",
+                n."novelId",
+                n."novelTitle"
+            FROM "chapter" c
+                     JOIN "chapter_status" cs
+                          ON c."chapterStatusId" = cs."chapterStatusId"
+                     JOIN "novel_info" n
+                          ON c."novelId" = n."novelId"
+            WHERE cs."chapterStatusId" = $1
+            ORDER BY n."novelId" ASC, c."chapterIndex" ASC
         `, [statusIdNum]);
 
-        res.json(result.rows);
+        // Nhóm theo truyện
+        const grouped = result.rows.reduce((acc, row) => {
+            const novelId = row.novelId;
+            if (!acc[novelId]) {
+                acc[novelId] = {
+                    novelId: row.novelId,
+                    novelTitle: row.novelTitle,
+                    chapters: []
+                };
+            }
+            acc[novelId].chapters.push({
+                chapterId: row.chapterId,
+                chapterTitle: row.chapterTitle,
+                chapterIndex: row.chapterIndex,
+                chapterStatusId: row.chapterStatusId,
+                chapterStatusCode: row.chapterStatusCode,
+                chapterStatusDescription: row.chapterStatusDescription
+            });
+            return acc;
+        }, {});
+
+        // Chuyển từ object sang array
+        res.json(Object.values(grouped));
     } catch (err) {
         console.error("getChaptersByStatusId error:", err);
         res.status(500).json({ message: "Lỗi server khi lấy danh sách chapter" });
