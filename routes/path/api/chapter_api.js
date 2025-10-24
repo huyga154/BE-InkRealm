@@ -35,7 +35,7 @@ router.post(
 );
 
 router.get("/moderator/chapter/list/:chapterStatusId",verifyToken,verifyModeratorOrAdmin, getChaptersByStatusId);
-router.get("/moderator/chapter/text/:chapterId",verifyModeratorOrAdmin, getChapterTextById);
+router.get("/moderator/chapter/text/:chapterId",verifyToken,verifyModeratorOrAdmin, getChapterTextById);
 
 
 module.exports = router;
