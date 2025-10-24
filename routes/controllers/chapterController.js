@@ -305,14 +305,13 @@ exports.setChapterPrice = async (req, res) => {
 exports.buyChapter = async (req, res) => {
     const { chapterId } = req.params;
     const accountId = req.user?.accountId;
-    const client = req.trxClient;
 
     if (!chapterId || isNaN(chapterId)) return res.status(400).json({ message: "chapterId không hợp lệ" });
     if (!accountId) return res.status(401).json({ message: "Không xác thực được tài khoản" });
 
     try {
-        // 🔹 Lấy thông tin chương
-        const chapter = await chapterService.getChapterWithUploader(client, chapterId);
+        // 🔹 Lấy thông tin chương và uploader
+        const chapter = await chapterService.getChapterWithUploader(pool, chapterId);
         if (!chapter) return res.status(404).json({ message: "Không tìm thấy chương" });
 
         const { price, uploaderId } = chapter;
@@ -322,20 +321,20 @@ exports.buyChapter = async (req, res) => {
         if (uploaderId === accountId) return res.status(400).json({ message: "Không thể mua chương của chính mình" });
 
         // 🔹 Kiểm tra đã mua chưa
-        if (await chapterService.checkAlreadyPurchased(client, accountId, chapterId))
+        if (await chapterService.checkAlreadyPurchased(pool, accountId, chapterId))
             return res.status(400).json({ message: "Đã mua chương này" });
 
         // 🔹 Kiểm tra số dư
-        const balance = await chapterService.getBalance(client, accountId);
+        const balance = await chapterService.getBalance(pool, accountId);
         if (balance === null) return res.status(404).json({ message: "Không tìm thấy tài khoản" });
         if (balance < price) return res.status(400).json({ message: "Số dư không đủ" });
 
         // 🔹 Thực hiện thanh toán
-        await chapterService.transferCoins(client, accountId, uploaderId, price);
+        await chapterService.transferCoins(pool, accountId, uploaderId, price);
 
         // 🔹 Ghi transaction và purchase
-        const transactionId = await chapterService.createTransaction(client, accountId, chapterId, price);
-        await chapterService.recordChapterPurchase(client, accountId, chapterId, transactionId);
+        const transactionId = await chapterService.createTransaction(pool, accountId, chapterId, price);
+        await chapterService.recordChapterPurchase(pool, accountId, chapterId, transactionId);
 
         return res.status(200).json({
             message: "Mua chương thành công",
