@@ -361,9 +361,9 @@ exports.getChaptersByStatusId = async (req, res) => {
                 c."chapterId",
                 c."chapterTitle",
                 c."chapterIndex",
+                c."createDate",
+                c."updateDate",
                 cs."chapterStatusId",
-                cs."chapterStatusCode",
-                cs."chapterStatusDescription",
                 n."novelId",
                 n."novelTitle"
             FROM "chapter" c
@@ -375,8 +375,8 @@ exports.getChaptersByStatusId = async (req, res) => {
             ORDER BY n."novelId" ASC, c."chapterIndex" ASC
         `, [statusIdNum]);
 
-        // Nhóm theo truyện
-        const grouped = result.rows.reduce((acc, row) => {
+        // Nhóm theo novel
+        const novelsMap = result.rows.reduce((acc, row) => {
             const novelId = row.novelId;
             if (!acc[novelId]) {
                 acc[novelId] = {
@@ -389,20 +389,23 @@ exports.getChaptersByStatusId = async (req, res) => {
                 chapterId: row.chapterId,
                 chapterTitle: row.chapterTitle,
                 chapterIndex: row.chapterIndex,
-                chapterStatusId: row.chapterStatusId,
-                chapterStatusCode: row.chapterStatusCode,
-                chapterStatusDescription: row.chapterStatusDescription
+                createDate: row.createDate,
+                updateDate: row.updateDate,
+                chapterStatusId: row.chapterStatusId
             });
             return acc;
         }, {});
 
-        // Chuyển từ object sang array
-        res.json(Object.values(grouped));
+        // Chỉ lấy các novel có ít nhất 1 chapter
+        const novelsList = Object.values(novelsMap).filter(novel => novel.chapters.length > 0);
+
+        res.json(novelsList);
     } catch (err) {
         console.error("getChaptersByStatusId error:", err);
         res.status(500).json({ message: "Lỗi server khi lấy danh sách chapter" });
     }
 };
+
 
 exports.getChapterTextById = async (req, res) => {
     try {

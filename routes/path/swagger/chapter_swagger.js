@@ -442,12 +442,14 @@ var router = express.Router();
 
 /**
  * @swagger
- * /chapter/list/{chapterStatusId}:
+ * /moderator/chapter/list/{chapterStatusId}:
  *   get:
  *     summary: Lấy danh sách chapter theo chapterStatusId
  *     description: Lấy tất cả chapter có trạng thái nhất định, không kiểm tra role
  *     tags:
  *       - Chapter
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: chapterStatusId

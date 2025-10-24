@@ -34,7 +34,7 @@ router.post(
     buyChapter
 );
 
-router.get("/chapter/list/:chapterStatusId", getChaptersByStatusId);
+router.get("/moderator/chapter/list/:chapterStatusId",verifyToken,verifyModeratorOrAdmin, getChaptersByStatusId);
 router.get("/moderator/chapter/text/:chapterId",verifyModeratorOrAdmin, getChapterTextById);
 
 
