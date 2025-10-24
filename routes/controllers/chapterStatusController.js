@@ -35,30 +35,126 @@ exports.updateChapterStatus = async (req, res) => {
     }
 };
 
+/**
+ * Lấy danh sách status mà role có quyền xem
+ * @param {number} roleId
+ * @returns {Array<{chapterStatusId: number, chapterStatusCode: string, chapterStatusDescription: string}>}
+ */
+exports.getAccessibleStatusByRole = async (roleId) => {
+    if (!roleId) return [];
 
+    // Admin: trả về tất cả status
+    if (roleId === 2) {
+        const statusResult = await pool.query(`
+            SELECT "chapterStatusId", "chapterStatusCode", "chapterStatusDescription"
+            FROM "chapter_status"
+            ORDER BY "chapterStatusId" ASC
+        `);
+        return statusResult.rows;
+    }
 
-exports.getChapterStatusList = async (req, res) => {
+    // User / Moderator: lấy status từ role_status_rule (fromStatusId + toStatusId)
+    const statusResult = await pool.query(`
+        SELECT DISTINCT chapter_status."chapterStatusId",
+                        chapter_status."chapterStatusCode",
+                        chapter_status."chapterStatusDescription"
+        FROM (
+                 SELECT "fromStatusId" AS statusId
+                 FROM "role_status_rule"
+                 WHERE "roleId" = $1
+                 UNION
+                 SELECT "toStatusId" AS statusId
+                 FROM "role_status_rule"
+                 WHERE "roleId" = $1
+             ) AS role_status_union
+                 INNER JOIN "chapter_status" AS chapter_status
+                            ON chapter_status."chapterStatusId" = role_status_union.statusId
+        ORDER BY chapter_status."chapterStatusId" ASC
+    `, [roleId]);
+
+    return statusResult.rows;
+};
+
+/**
+ * API: uploader chỉ xem được status các chapter thuộc novel do họ sở hữu
+ */
+exports.getUploaderChapterStatus = async (req, res) => {
     try {
-        const { where } = req.chapterFilter || {};
-        let query = `
-            SELECT c."chapterId", c."chapterTitle", c."chapterStatusId", 
-                   cs."chapterStatusCode", cs."chapterStatusDescription"
-            FROM "chapter" c
-            JOIN "chapter_status" cs ON c."chapterStatusId" = cs."chapterStatusId"
-            JOIN "novel_info" n ON c."novelId" = n."novelId"
-        `;
+        const { accountId } = req.user;
 
-        if (where) {
-            query += ` WHERE ${where}`;
-        }
+        const roleResult = await pool.query(`
+            SELECT "roleId"
+            FROM "account"
+            WHERE "accountId" = $1
+        `, [accountId]);
 
-        query += ' ORDER BY c."chapterIndex" ASC';
+        if (!roleResult.rows.length) return res.status(403).json({ message: "Không tìm thấy role" });
 
-        const result = await pool.query(query);
-        res.json(result.rows);
+        const roleId = roleResult.rows[0].roleId;
+        const statuses = await exports.getAccessibleStatusByRole(roleId);
+        const statusIds = statuses.map(status => status.chapterStatusId);
+
+        req.chapterFilter = {
+            where: statusIds.length
+                ? `"novel_info"."accountId" = ${accountId} AND "chapter"."chapterStatusId" = ANY(ARRAY[${statusIds.join(",")}])`
+                : "FALSE"
+        };
+
+        res.json(statuses);
     } catch (err) {
-        console.error('getChapterStatusList error:', err);
-        res.status(500).json({ message: 'Lỗi server khi lấy danh sách chapter' });
+        console.error(err);
+        res.status(500).json({ message: "Lỗi server khi lấy danh sách trạng thái" });
     }
 };
 
+/**
+ * API: moderator xem được status theo role_status_rule
+ */
+exports.getModeratorChapterStatus = async (req, res) => {
+    try {
+        const { accountId } = req.user;
+
+        const roleResult = await pool.query(`
+            SELECT "roleId"
+            FROM "account"
+            WHERE "accountId" = $1
+        `, [accountId]);
+
+        if (!roleResult.rows.length) return res.status(403).json({ message: "Không tìm thấy role" });
+
+        const roleId = roleResult.rows[0].roleId;
+        const statuses = await exports.getAccessibleStatusByRole(roleId);
+        const statusIds = statuses.map(status => status.chapterStatusId);
+
+        req.chapterFilter = {
+            where: statusIds.length
+                ? `"chapter"."chapterStatusId" = ANY(ARRAY[${statusIds.join(",")}])`
+                : "FALSE"
+        };
+
+        res.json(statuses);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Lỗi server khi lấy danh sách trạng thái" });
+    }
+};
+
+/**
+ * API: admin xem tất cả status
+ */
+exports.getAdminChapterStatus = async (req, res) => {
+    try {
+        const statusResult = await pool.query(`
+            SELECT "chapterStatusId", "chapterStatusCode", "chapterStatusDescription"
+            FROM "chapter_status"
+            ORDER BY "chapterStatusId" ASC
+        `);
+
+        const statuses = statusResult.rows;
+        req.chapterFilter = {}; // admin lấy tất cả
+        res.json(statuses);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Lỗi server khi lấy danh sách trạng thái" });
+    }
+};

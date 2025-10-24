@@ -197,3 +197,11 @@ CREATE INDEX IF NOT EXISTS idx_account_roleId
 -- =========================================
 ALTER TABLE "novel_info"
     ADD COLUMN IF NOT EXISTS "novel_img_url" TEXT;
+
+
+CREATE TABLE "role_status_rule" (
+                                    "id" SERIAL PRIMARY KEY,
+                                    "roleId" INT NOT NULL REFERENCES "role"("roleId") ON DELETE CASCADE,
+                                    "fromStatusId" INT NOT NULL,
+                                    "toStatusId" INT NOT NULL
+);

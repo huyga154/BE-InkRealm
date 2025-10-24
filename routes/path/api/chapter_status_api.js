@@ -11,7 +11,7 @@ const {
     uploaderAccess,
     moderatorAccess
     } = require("../../middleware/chapterStatusMiddleware");
-const {getChapterStatusList} = require("../../controllers/chapterStatusController");
+const {getChapterStatusList, getUploaderChapterStatus, getModeratorChapterStatus, getAdminChapterStatus} = require("../../controllers/chapterStatusController");
 
 
 router.put(
@@ -36,8 +36,8 @@ router.put("/admin/chapter/:chapterId/status/:chapterStatusId",
     putChangeChapterStatus
 );
 
-router.get('/uploader/chapter-status', verifyToken, uploaderAccess, getChapterStatusList);
-router.get('/moderator/chapter-status', verifyToken, verifyModeratorOrAdmin, moderatorAccess, getChapterStatusList);
-router.get('/admin/chapter-status', verifyToken, verifyAdmin, adminAccess, getChapterStatusList);
+router.get('/uploader/chapter-status', verifyToken, getUploaderChapterStatus);
+router.get('/moderator/chapter-status', verifyToken, verifyModeratorOrAdmin, getModeratorChapterStatus);
+router.get('/admin/chapter-status', verifyToken, verifyAdmin, getAdminChapterStatus);
 
 module.exports = router;

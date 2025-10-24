@@ -1,37 +1,5 @@
 const pool = require("../config/db");
 
-const STATUS = {
-    PUBLIC: 1,
-    DRAFT: 2,
-    COMPLETE: 3,
-    WAIT_FOR_PUBLIC: 4,
-    WANT_TO_VERIFY: 5,
-    VERIFIED: 6,
-    REFUSE: 7,
-};
-
-const ROLE_RULES = {
-    user: [
-        [STATUS.DRAFT, STATUS.WANT_TO_VERIFY],
-        [STATUS.WANT_TO_VERIFY, STATUS.DRAFT],
-        [STATUS.VERIFIED, STATUS.PUBLIC],
-        [STATUS.PUBLIC, STATUS.DRAFT],
-        [STATUS.REFUSE, STATUS.DRAFT],
-    ],
-    moderator: [
-        [STATUS.WANT_TO_VERIFY, STATUS.VERIFIED],
-        [STATUS.WANT_TO_VERIFY, STATUS.REFUSE],
-        [STATUS.REFUSE, STATUS.VERIFIED],
-    ],
-    admin: Object.values(STATUS).flatMap(from =>
-        Object.values(STATUS).map(to => [from, to])
-    ),
-};
-
-/**
- * Middleware: kiểm tra quyền thay đổi trạng thái chapter
- * Lấy chapterId từ params và newChapterStatusId từ params
- */
 exports.verifyChangeChapterStatus = async (req, res, next) => {
     try {
         const { chapterId, chapterStatusId } = req.params;
@@ -41,48 +9,50 @@ exports.verifyChangeChapterStatus = async (req, res, next) => {
             return res.status(400).json({ message: "Thiếu chapterId hoặc chapterStatusId" });
         }
 
-        // Lấy role của user từ DB
-        const roleResult = await pool.query(
-            'SELECT r."roleName" AS role FROM "account" a JOIN "role" r ON a."roleId"=r."roleId" WHERE a."accountId"=$1',
+        // Lấy roleId và roleName của user
+        const roleRes = await pool.query(
+            `SELECT a."roleId", r."roleName"
+             FROM "account" a
+             JOIN "role" r ON a."roleId" = r."roleId"
+             WHERE a."accountId" = $1`,
             [accountId]
         );
-        if (!roleResult.rows.length) {
-            return res.status(403).json({ message: "Không tìm thấy vai trò của user" });
+        if (!roleRes.rows.length) {
+            return res.status(403).json({ message: "Không tìm thấy vai trò user" });
         }
-        const role = roleResult.rows[0].role.toLowerCase(); // 'user', 'moderator', 'admin'
+        const { roleId, roleName } = roleRes.rows[0];
 
-        // Lấy trạng thái hiện tại
-        const result = await pool.query(
+        // Lấy trạng thái hiện tại của chapter
+        const chapterRes = await pool.query(
             `SELECT "chapterStatusId" AS "currentChapterStatus"
              FROM "chapter"
              WHERE "chapterId" = $1`,
             [chapterId]
         );
-        if (!result.rows.length) {
+        if (!chapterRes.rows.length) {
             return res.status(404).json({ message: "Chương không tồn tại" });
         }
 
-        const { currentChapterStatus } = result.rows[0];
-        const oldStatus = currentChapterStatus;
+        const oldStatus = chapterRes.rows[0].currentChapterStatus;
         const newStatus = Number(chapterStatusId);
-        const rules = ROLE_RULES[role];
 
-        if (!rules) {
-            return res.status(403).json({ message: "Vai trò không hợp lệ hoặc không có quyền thay đổi trạng thái này" });
-        }
+        // Kiểm tra quyền đổi trạng thái từ DB
+        const ruleRes = await pool.query(
+            `SELECT 1 FROM "role_status_rule"
+             WHERE "roleId" = $1 AND "fromStatusId" = $2 AND "toStatusId" = $3`,
+            [roleId, oldStatus, newStatus]
+        );
 
-        const valid = rules.some(([from, to]) => from === oldStatus && to === newStatus);
-
-        if (!valid) {
+        if (!ruleRes.rows.length) {
             return res.status(400).json({
-                message: `Không thể đổi trạng thái từ ${statusName(oldStatus)} sang ${statusName(newStatus)} với vai trò ${role}`,
+                message: `Role ${roleName} không được đổi trạng thái này`,
             });
         }
 
         next();
     } catch (err) {
         console.error("verifyChangeChapterStatus error:", err);
-        res.status(500).json({ message: "Lỗi kiểm tra trạng thái chương" });
+        res.status(500).json({ message: "Lỗi server khi kiểm tra quyền đổi trạng thái" });
     }
 };
 
