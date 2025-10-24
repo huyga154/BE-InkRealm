@@ -399,7 +399,8 @@ exports.getChaptersByStatusId = async (req, res) => {
         // Chỉ lấy các novel có ít nhất 1 chapter
         const novelsList = Object.values(novelsMap).filter(novel => novel.chapters.length > 0);
 
-        res.json(novelsList);
+        // ✅ Wrap vào object 'novels'
+        res.json({ novels: novelsList });
     } catch (err) {
         console.error("getChaptersByStatusId error:", err);
         res.status(500).json({ message: "Lỗi server khi lấy danh sách chapter" });
