@@ -14,6 +14,8 @@ const router = express.Router();
  *   get:
  *     summary: Lấy doanh thu hôm nay
  *     tags: [Revenue]
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Doanh thu của ngày hôm nay
@@ -36,6 +38,8 @@ const router = express.Router();
  *   get:
  *     summary: Lấy doanh thu theo ngày cụ thể
  *     tags: [Revenue]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: date
@@ -64,6 +68,8 @@ const router = express.Router();
  *   get:
  *     summary: Lấy doanh thu tổng & chi tiết theo ngày trong khoảng thời gian
  *     tags: [Revenue]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: from
@@ -99,6 +105,8 @@ const router = express.Router();
  *   get:
  *     summary: Lấy doanh thu của năm hiện tại
  *     tags: [Revenue]
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Doanh thu trong năm hiện tại
@@ -128,6 +136,8 @@ const router = express.Router();
  *   get:
  *     summary: Lấy tất cả role trong hệ thống
  *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Danh sách role được lấy thành công
@@ -155,6 +165,8 @@ const router = express.Router();
  *   post:
  *     summary: Admin tạo tài khoản mới
  *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -216,6 +228,8 @@ const router = express.Router();
  *   put:
  *     summary: Cập nhật thông tin tài khoản
  *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: accountId
@@ -276,6 +290,8 @@ const router = express.Router();
  *   delete:
  *     summary: Xóa tài khoản theo ID
  *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: accountId
