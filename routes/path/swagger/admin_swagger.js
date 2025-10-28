@@ -115,4 +115,186 @@ const router = express.Router();
  *                   example: 520000
  */
 
+/**
+ * @swagger
+ * tags:
+ *   name: Admin
+ *   description: API cho admin
+ */
+
+/**
+ * @swagger
+ * /admin/roles/all:
+ *   get:
+ *     summary: Lấy tất cả role trong hệ thống
+ *     tags: [Admin]
+ *     responses:
+ *       200:
+ *         description: Danh sách role được lấy thành công
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   roleId:
+ *                     type: integer
+ *                     example: 1
+ *                   roleName:
+ *                     type: string
+ *                     example: ADMIN
+ *                   roleDescription:
+ *                     type: string
+ *                     example: Quản trị viên hệ thống
+ */
+
+/**
+ * @swagger
+ * /admin/account/create:
+ *   post:
+ *     summary: Admin tạo tài khoản mới
+ *     tags: [Admin]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - username
+ *               - password
+ *               - email
+ *               - roleId
+ *             properties:
+ *               username:
+ *                 type: string
+ *                 example: admin01
+ *               password:
+ *                 type: string
+ *                 example: 123456
+ *               fullName:
+ *                 type: string
+ *                 example: Nguyễn Minh Huy
+ *               email:
+ *                 type: string
+ *                 example: huy@example.com
+ *               avatar:
+ *                 type: string
+ *                 example: https://example.com/avatar.png
+ *               roleId:
+ *                 type: integer
+ *                 example: 2
+ *     responses:
+ *       201:
+ *         description: Tạo tài khoản thành công
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Account created
+ *                 account:
+ *                   type: object
+ *                   properties:
+ *                     accountId:
+ *                       type: integer
+ *                       example: 5
+ *                     username:
+ *                       type: string
+ *                       example: admin01
+ *                     roleId:
+ *                       type: integer
+ *                       example: 2
+ */
+
+/**
+ * @swagger
+ * /admin/account/{accountId}/update:
+ *   put:
+ *     summary: Cập nhật thông tin tài khoản
+ *     tags: [Admin]
+ *     parameters:
+ *       - in: path
+ *         name: accountId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         example: 5
+ *     requestBody:
+ *       required: false
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               username:
+ *                 type: string
+ *                 example: new_admin
+ *               fullName:
+ *                 type: string
+ *                 example: Nguyễn Minh Huy
+ *               email:
+ *                 type: string
+ *                 example: huy@example.com
+ *               avatar:
+ *                 type: string
+ *                 example: https://example.com/avatar2.png
+ *               roleId:
+ *                 type: integer
+ *                 example: 3
+ *     responses:
+ *       200:
+ *         description: Cập nhật tài khoản thành công
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Account updated
+ *                 account:
+ *                   type: object
+ *                   properties:
+ *                     accountId:
+ *                       type: integer
+ *                       example: 5
+ *                     username:
+ *                       type: string
+ *                       example: new_admin
+ *                     roleId:
+ *                       type: integer
+ *                       example: 3
+ */
+
+/**
+ * @swagger
+ * /admin/account/{accountId}/delete:
+ *   delete:
+ *     summary: Xóa tài khoản theo ID
+ *     tags: [Admin]
+ *     parameters:
+ *       - in: path
+ *         name: accountId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         example: 5
+ *     responses:
+ *       200:
+ *         description: Xóa tài khoản thành công
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Account deleted
+ */
+
+
 module.exports = router;
