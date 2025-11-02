@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-const { verifyToken, verifyModeratorOrAdmin} = require("../../middleware/authMiddleware");
+const { verifyToken, verifyModeratorOrAdmin, verifyNovelOwner} = require("../../middleware/authMiddleware");
 const {
     getChapterList,
     postAddNewChapter,
@@ -11,9 +11,10 @@ const {
 } = require("../../controllers/chapterController");
 const { verifyUploader, resetStatusToDraft}
     = require("../../middleware/chapterMiddleware");
+const {updateNovelGenre} = require("../../controllers/novelGenreController");
 
 router.get("/chapter/list/:novelId", getChapterList);
-router.post("/chapter/add", postAddNewChapter);
+router.post("/chapter/add",verifyToken,verifyUploader, postAddNewChapter);
 router.get("/chapter/text", verifyToken, getChapterText);
 router.get("/chapter/detail", getChapterDetail);
 
@@ -36,6 +37,10 @@ router.post(
 
 router.get("/moderator/chapter/list/:chapterStatusId",verifyToken,verifyModeratorOrAdmin, getChaptersByStatusId);
 router.get("/moderator/chapter/text/:chapterId",verifyToken,verifyModeratorOrAdmin, getChapterTextById);
+
+
+
+
 
 
 module.exports = router;

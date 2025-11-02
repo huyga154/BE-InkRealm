@@ -72,6 +72,8 @@ var router = express.Router();
  *   post:
  *     summary: Thêm chapter mới
  *     tags: [Chapter]
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -532,6 +534,10 @@ var router = express.Router();
  *       500:
  *         description: Lỗi server khi lấy nội dung chapter
  */
+
+
+
+
 
 
 module.exports = router;

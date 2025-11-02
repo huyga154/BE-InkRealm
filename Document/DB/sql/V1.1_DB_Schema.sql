@@ -205,3 +205,37 @@ CREATE TABLE "role_status_rule" (
                                     "fromStatusId" INT NOT NULL,
                                     "toStatusId" INT NOT NULL
 );
+
+
+-- Bảng 1: Genre Category
+CREATE TABLE genre_category (
+                                id SERIAL PRIMARY KEY,
+                                name VARCHAR(100) NOT NULL,
+                                description TEXT
+);
+
+-- Bảng 2: Genre
+CREATE TABLE genre (
+                       id SERIAL PRIMARY KEY,
+                       category_id INT NOT NULL REFERENCES genre_category(id) ON DELETE CASCADE,
+                       name VARCHAR(100) NOT NULL,
+                       description TEXT
+);
+
+-- Bảng trung gian N-N giữa novel và genre
+CREATE TABLE novel_genre (
+                             "novelId" INT NOT NULL REFERENCES "novel_info"("novelId") ON DELETE CASCADE,
+                             "genreId" INT NOT NULL REFERENCES "genre"("id") ON DELETE CASCADE,
+                             PRIMARY KEY ("novelId", "genreId")
+);
+
+-- View hiển thị tên truyện và tên genre
+CREATE OR REPLACE VIEW view_novel_genre AS
+SELECT
+    ng."novelId",
+    ni."novelTitle",
+    ng."genreId",
+    g."name" AS "genreName"
+FROM novel_genre ng
+         JOIN "novel_info" ni ON ng."novelId" = ni."novelId"
+         JOIN "genre" g ON ng."genreId" = g."id";

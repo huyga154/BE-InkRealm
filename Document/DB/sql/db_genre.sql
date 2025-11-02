@@ -1,74 +1,111 @@
-INSERT INTO "genre" ("genreName", "genreDescription") VALUES
-                                                          ('Hành động', 'Truyện nhấn mạnh vào các pha chiến đấu, hành động nhanh, mạo hiểm và nguy hiểm. Nhân vật thường đối mặt với kẻ thù mạnh, tình huống sinh tử và các thử thách gay cấn. Phù hợp với độc giả thích kịch tính, tốc độ cao và cảm giác hồi hộp.'),
-                                                          ('Phiêu lưu', 'Nhân vật chính đi du hành, khám phá thế giới mới, đối mặt nhiều thử thách và bí ẩn. Thể loại tập trung vào hành trình phát triển của nhân vật, khám phá các vùng đất xa lạ, sinh tồn và trải nghiệm nhiều cảm xúc khác nhau.'),
-                                                          ('Lãng mạn', 'Tập trung vào các mối quan hệ tình cảm, tình yêu giữa các nhân vật. Có thể bao gồm tình tay ba, tình cảm tuổi trẻ, tình yêu định mệnh hoặc các tình huống tréo ngoe, lãng mạn, xúc động.'),
-                                                          ('Hài hước', 'Truyện chứa yếu tố gây cười, trào phúng, tình huống dở khóc dở cười hoặc mâu thuẫn hài hước giữa các nhân vật. Thường giúp giải trí, giảm căng thẳng, mang đến cảm giác vui vẻ cho độc giả.'),
-                                                          ('Kinh dị', 'Tạo cảm giác sợ hãi, hồi hộp cho người đọc thông qua ma quái, quái vật, hiện tượng siêu nhiên hoặc các vụ án ghê rợn. Thường có cốt truyện u ám, cảnh tượng đáng sợ, thử thách tâm lý nhân vật.'),
-                                                          ('Fantasy', 'Thế giới giả tưởng với phép thuật, sinh vật huyền bí, vương quốc và các pháp thuật đặc biệt. Nhân vật có thể là anh hùng, pháp sư, chiến binh phi thường. Thể loại nhấn mạnh bối cảnh kỳ ảo và luật lệ riêng của thế giới.'),
-                                                          ('Khoa học viễn tưởng', 'Truyện dựa trên khoa học, công nghệ tương lai, vũ trụ, robot, du hành thời gian hoặc các hiện tượng chưa giải thích. Tập trung vào sự phát triển trí tuệ, công nghệ, và các vấn đề đạo đức, xã hội trong tương lai.'),
-                                                          ('Cổ trang', 'Bối cảnh lịch sử, cung đình, võ thuật, chính trị thời xưa. Thường có các mưu kế, âm mưu quyền lực, quan hệ gia tộc, võ học và truyền thống. Nhân vật có thể là kiếm khách, quan lại, hoàng tử công chúa.'),
-                                                          ('Lịch sử', 'Truyện dựa trên sự kiện, nhân vật lịch sử hoặc bối cảnh thời quá khứ. Có thể pha trộn yếu tố hư cấu nhưng giữ cốt lõi lịch sử. Giúp độc giả hiểu bối cảnh lịch sử và các giá trị văn hóa.'),
-                                                          ('Bí ẩn', 'Nhân vật giải quyết vụ án, tìm kiếm manh mối, phá án. Thể loại thường có nhiều tình tiết bất ngờ, logic suy luận, và câu chuyện phức tạp để giữ sự tò mò cho người đọc.'),
-                                                          ('Tâm lý', 'Khám phá nội tâm nhân vật, hành vi, xung đột và những cảm xúc phức tạp. Thể loại tập trung vào việc mô tả tâm lý, mâu thuẫn và sự phát triển nội tâm của nhân vật.'),
-                                                          ('Học đường', 'Bối cảnh học sinh, sinh viên, lớp học, câu lạc bộ. Khám phá tình bạn, tình yêu, ganh đua, học tập và các hoạt động tuổi trẻ. Phù hợp với độc giả trẻ, mang nhiều trải nghiệm đời thường nhưng lôi cuốn.'),
-                                                          ('Gia đình', 'Miêu tả mối quan hệ giữa các thành viên trong gia đình, tình cảm cha mẹ, anh chị em, hôn nhân và các vấn đề nội bộ gia đình. Nhấn mạnh sự gắn kết, xung đột và phát triển tình cảm gia đình.'),
-                                                          ('Đời thường', 'Truyện khai thác cuộc sống hàng ngày, sinh hoạt, công việc, chuyện làng, câu chuyện đời thường nhưng có chiều sâu về cảm xúc và nhân vật. Thường nhẹ nhàng, dễ tiếp cận.'),
-                                                          ('Trinh thám', 'Nhân vật phá án, theo dõi, tìm manh mối và giải quyết vụ án. Cốt truyện thường phức tạp, logic, với nhiều tình tiết bất ngờ, thử thách khả năng suy luận của người đọc.'),
-                                                          ('Harem', 'Nhân vật chính được nhiều đối tượng tình cảm quan tâm hoặc yêu thích. Thường có các tình huống hài hước, lãng mạn và xung đột giữa các mối quan hệ.'),
-                                                          ('Hệ thống', 'Truyện có yếu tố game hóa, nhân vật chính sở hữu hệ thống hoặc kỹ năng, có cấp bậc, điểm kinh nghiệm, nhiệm vụ.'),
-                                                          ('Thế giới game', 'Bối cảnh là trò chơi hoặc thế giới ảo, nhân vật tham gia như trong game. Có thể là nhập vai, thực tế ảo, hay cạnh tranh với người chơi khác.'),
-                                                          ('Văn hóa phương Đông', 'Truyện dựa trên phong tục, tập quán, truyền thuyết, triết lý, văn hóa Đông Á, phương Đông. Thường khai thác đạo đức, phép tắc, võ học và truyền thống.'),
-                                                          ('Văn hóa phương Tây', 'Truyện dựa trên văn hóa, truyền thuyết, tôn giáo và xã hội phương Tây. Khai thác triết lý, lịch sử, chiến tranh và phát triển xã hội.'),
-                                                          ('Quyền mưu', 'Nhân vật tham gia tranh quyền đoạt vị, âm mưu, đấu trí. Thể loại nhấn mạnh trí tuệ, chiến lược, âm mưu và thủ đoạn trong xã hội hoặc chính trị.'),
-                                                          ('Đại âm mưu', 'Cả bộ truyện hoặc phần lớn nội dung xoay quanh một âm mưu cực lớn, chi phối toàn bộ câu chuyện. Ví dụ như các tổ chức bí ẩn, kế hoạch, âm mưu có ảnh hưởng xuyên suốt từ đầu đến cuối truyện.'),
-                                                          ('Phát triển thế lực', 'Nhân vật hoặc nhóm xây dựng, phát triển quyền lực, thế lực riêng, ảnh hưởng xã hội hoặc quân sự. Thường đi kèm chiến lược, âm mưu và đối đầu.'),
-                                                          ('Phát triển xã hội', 'Truyện thể hiện sự thay đổi hoặc phát triển của xã hội, luật lệ, tổ chức, tập thể. Nhấn mạnh tiến trình, chính sách và hệ thống xã hội.'),
-                                                          ('Bối cảnh vũ trụ', 'Câu chuyện diễn ra trên quy mô vũ trụ, nhiều hành tinh, thiên hà, với các nền văn minh, sinh vật và chính trị rộng lớn.'),
-                                                          ('Hậu tận thế', 'Nhân vật sống sót sau thảm họa toàn cầu, xã hội sụp đổ, phải thích nghi với môi trường khắc nghiệt, sinh tồn và tái thiết.'),
-                                                          ('Tận thế', 'Bối cảnh diệt vong, thế giới sụp đổ, loài người phải đối mặt với khủng hoảng, dịch bệnh, chiến tranh, thiên tai. Nhấn mạnh sinh tồn và phản ứng của nhân loại.'),
-                                                          ('Zombie', 'Xuất hiện xác sống, dịch bệnh lan rộng, nhân vật phải sinh tồn và chống lại zombie. Tình huống nguy hiểm, kịch tính và căng thẳng.'),
-                                                          ('Xuyên không', 'Nhân vật đi đến một thế giới khác, có thể là quá khứ, tương lai hoặc thế giới giả tưởng. Thường phải thích nghi với môi trường mới và thay đổi số phận.'),
-                                                          ('Xuyên sách', 'Nhân vật đi vào thế giới trong sách hoặc tiểu thuyết, tương tác với cốt truyện và nhân vật trong đó. Thường có yếu tố điều khiển, thay đổi kết cục.'),
-                                                          ('Trọng sinh', 'Nhân vật chết đi sống lại, thường quay về quá khứ hoặc cùng thế giới, mang theo kiến thức hoặc kinh nghiệm trước để thay đổi số phận.'),
-                                                          ('Dã sử', 'Truyện dựa trên sự kiện lịch sử nhưng hư cấu nhiều chi tiết, nhân vật hoặc tình tiết chưa từng xảy ra. Thường tái hiện bối cảnh cổ đại với hư cấu sáng tạo.'),
-                                                          ('Vô hạn lưu', 'Nhân vật đi qua các không gian, thế giới vô hạn, trải nghiệm nhiều bối cảnh khác nhau, thời gian và luật lệ thay đổi liên tục.'),
-                                                          ('Võ hiệp thế giới', 'Truyện tập trung vào võ thuật, cao thủ, bang phái, giang hồ, các cuộc tranh đấu võ công, đạo đức võ hiệp.'),
-                                                          ('Tiên hiệp thế giới', 'Nhân vật tu tiên, luyện đạo, bái phái, học thuật huyền bí trong thế giới tiên hiệp. Thường có luật tu tiên, linh lực và pháp thuật.'),
-                                                          ('Khoa học thế giới', 'Thế giới lấy khoa học làm chủ đạo, các phát minh, công nghệ, trí tuệ nhân tạo, xã hội phát triển dựa trên khoa học.'),
-                                                          ('Siêu năng thế giới', 'Nhân vật sở hữu siêu năng lực, khả năng đặc biệt trong bối cảnh thế giới riêng. Tình huống xoay quanh phát triển năng lực và xung đột.'),
-                                                          ('Thần thoại thế giới', 'Truyện dựa trên thần thoại, vị thần, sinh vật huyền thoại. Khám phá truyền thuyết, lịch sử thần thoại và các cuộc phiêu lưu huyền bí.'),
-                                                          ('Chiến tranh thế giới', 'Bối cảnh chiến tranh quy mô lớn, toàn cầu hoặc đa quốc gia, chiến lược, binh pháp, tác động xã hội và chính trị.'),
-                                                          ('Văn minh thế giới', 'Bối cảnh thế giới phát triển cao, mọi người tôn trọng luật lệ, xã hội vận hành tốt, kỹ thuật và văn hóa phát triển ổn định.'),
-                                                          ('Chư thiên vạn giới', 'Bối cảnh đa vũ trụ, đa vị diện, đa thế giới. Một hoặc nhiều nhân vật di chuyển giữa các thế giới, các thế lực và thực thể huyền bí tương tác đa dạng.')
-ON CONFLICT ("genreName") DO NOTHING;
 
-INSERT INTO "genre" ("genreName", "genreDescription") VALUES
-                                                          ('Nhiều người xuyên không', 'Truyện có nhiều nhân vật đi xuyên không, có thể xuyên đến thế giới nhân vật chính hoặc đến thế giới khác. Việc xuyên không có thể khác biệt thời gian địa điểm, cùng thế giới là được'),
-                                                          ('Chiến tranh hiện đại', 'Bối cảnh chiến tranh trong thời hiện đại, sử dụng vũ khí, chiến thuật và công nghệ hiện đại. Nhân vật tham gia quân đội, gián điệp hoặc lực lượng đặc nhiệm, trải qua các tình huống sinh tử, chiến lược và chính trị.'),
-                                                          ('Chiến tranh khoa học huyễn tưởng', 'Trận chiến diễn ra trong bối cảnh tương lai hoặc giả tưởng với công nghệ tiên tiến, robot, vũ khí năng lượng, tàu vũ trụ và chiến lược vượt thời gian. Tập trung vào xung đột khoa học và chiến lược, đồng thời thử thách trí tuệ và kỹ năng nhân vật.'),
-                                                          ('Chiến tranh cổ đại', 'Chiến tranh thời cổ, bao gồm đấu trường, binh pháp, võ công, cung vua và các triều đại. Nhân vật tham gia chiến lược, âm mưu, mở rộng lãnh thổ hoặc bảo vệ quốc gia, kết hợp yếu tố lịch sử và phiêu lưu.'),
-                                                          ('Lịch sử Việt Nam', 'Truyện dựa trên các sự kiện lịch sử, triều đại, anh hùng và văn hóa Việt Nam. Có thể pha trộn hư cấu nhưng giữ cốt lõi lịch sử, nhấn mạnh giá trị dân tộc, chiến công và sự kiện quan trọng.'),
-                                                          ('Triều đại Việt Nam', 'Tập trung vào các triều đại Việt Nam, cung đình, chính trị, mưu kế hoàng tộc và quan lại. Khám phá quyền lực, quan hệ gia tộc, âm mưu và sự phát triển xã hội qua các thời kỳ.'),
-                                                          ('Thần thoại Việt Nam', 'Dựa trên các truyền thuyết, thần thoại, vị thần, yêu ma, anh hùng dân gian Việt Nam. Nhấn mạnh các câu chuyện văn hóa, phép thuật, chiến công và những bài học đạo đức, truyền thống.'),
-                                                          ('Nghiên cứu phát minh', 'Truyện tập trung vào việc nghiên cứu, phát minh hoặc sáng tạo những vật phẩm, công nghệ, tư duy, pháp thuật, võ học mới. Nhấn mạnh tính sáng tạo và ảnh hưởng của phát minh trong thế giới truyện, nhưng không tính [các vật, nghiên cứu được xuyên về từ tương lai] hoặc [đồ được lấy từ hệ thống hay thế giới khác.]'),
-                                                          ('Xuyên Việt quá khứ', 'Nhân vật xuyên không về Việt Nam trong quá khứ, tham gia vào các sự kiện lịch sử, thay đổi hoặc trải nghiệm cuộc sống trước đây. Phù hợp với các câu chuyện lịch sử, hư cấu lịch sử hoặc phiêu lưu thời gian.'),
-                                                          ('Xuyên Việt tương lai', 'Nhân vật xuyên đến Việt Nam trong tương lai, trải nghiệm xã hội, công nghệ và văn hóa phát triển. Nhấn mạnh thích nghi, khám phá và ảnh hưởng của nhân vật đến môi trường tương lai.'),
-                                                          ('Đa hướng xuyên Việt', 'Thể loại xuyên không nhưng nhân vật có thể qua lại giữa quá khứ, hiện tại , tương lai, hoặc giữa các thế giới cũ và mới. Nhấn mạnh khả năng di chuyển qua lại.'),
-                                                          ('Văn minh xâm lấn', 'Truyện có các nền văn minh mạnh mẽ, mở rộng quyền lực, áp đặt luật lệ, văn hóa hoặc công nghệ lên thế giới khác. Nhân vật và xã hội phải đối mặt hoặc phản ứng với ảnh hưởng xâm lấn này.'),
-                                                          ('Văn hóa xâm lấn', 'Khám phá sự lan truyền và xâm nhập văn hóa, phong tục, tập quán từ một nền văn minh hoặc thế giới khác, tác động đến nhân vật và bối cảnh câu chuyện.'),
-                                                          ('Thân thể phi nhân loại', 'Nhân vật chính hoặc chủng tộc của nhân vật chính sở hữu thân thể không phải con người, ví dụ như thú, yêu, ma, người máy, ác quỷ, thần thánh ,.... Có thể mang hình dáng tương tự nhân loại nhưng bản chất là giống loài khác.'),
-                                                          ('Cực kì may mắn', 'Nhân vật chính cực kì may mắn, mọi việc đều thuận lợi, đạt thành công gần như không gặp trở ngại. Yếu tố may mắn chi phối hành trình và kết quả, tạo ra các tình huống bất ngờ hoặc hài hước')
-ON CONFLICT ("genreName") DO NOTHING;
 
-INSERT INTO "genre" ("genreName", "genreDescription") VALUES
-    ('Trò chơi sinh tử', 'Nhân vật phải tham gia vào các trò chơi nguy hiểm, thử thách sinh tử với luật lệ nghiêm ngặt. Người thua sẽ mất mạng hoặc gặp hậu quả nặng nề, nhân vật phải vận dụng trí tuệ, chiến lược, kỹ năng và may mắn để sống sót. Thể loại thường tạo cảm giác căng thẳng, hồi hộp và kịch tính cao.')
-ON CONFLICT ("genreName") DO NOTHING;
+INSERT INTO genre_category (id, name, description) VALUES
+           (1, 'Nhân vật', 'Các thuộc tính hoặc đặc điểm của nhân vật chính'),
+           (2, 'Thế giới', 'Các loại thế giới trong truyện'),
+           (3, 'Bối cảnh', 'Bối cảnh nơi diễn ra câu chuyện'),
+           (4, 'Cốt truyện', 'Các yếu tố cốt truyện chính'),
+           (5, 'Chủ đề', 'Chủ đề và phong cách tổng thể của truyện');
 
-INSERT INTO "genre" ("genreName", "genreDescription") VALUES
-                                                          ('Chủ nghĩa Mác-Lênin', 'Truyện khai thác các lý thuyết, triết lý và tư tưởng của Chủ nghĩa Mác-Lênin.'),
-                                                          ('Chủ nghĩa cộng sản', 'Truyện khai thác các lý thuyết, triết lý và tư tưởng của Chủ nghĩa cộng sản.'),
-                                                          ('Triều đại phong kiến', 'Truyện đặt bối cảnh trong các triều đại phong kiến, với các vua, quan lại, cung đình, âm mưu chính trị, quyền lực gia tộc và xã hội phong kiến. Nhấn mạnh đấu trí, quyền lực, truyền thống và luật lệ thời phong kiến.'),
-                                                          ('Khởi nghĩa', 'Nhân vật tham gia các phong trào khởi nghĩa, nổi dậy, đấu tranh chống áp bức hoặc chiến đấu cho tự do, độc lập. Thể loại nhấn mạnh chiến lược, mưu lược, lãnh đạo và tinh thần đoàn kết.'),
-                                                          ('Tự hào dân tộc', 'Truyện truyền tải tinh thần yêu nước, tự hào dân tộc, tôn vinh văn hóa, lịch sử và truyền thống dân tộc Việt Nam. Nhấn mạnh bản sắc dân tộc và sự đóng góp của nhân vật vào lịch sử.'),
-                                                          ('Văn hóa Việt Nam', 'Khám phá phong tục, lễ hội, truyền thống, triết lý sống và các giá trị văn hóa đặc trưng của Việt Nam. Có thể bao gồm đời sống thường nhật, gia đình, lễ nghi và các yếu tố xã hội Việt Nam.')
-ON CONFLICT ("genreName") DO NOTHING;
+
+
+-- =============================
+-- Nhân vật
+-- =============================
+INSERT INTO genre (category_id, name, description) VALUES
+           (1, 'Lạnh lùng', 'Nhân vật ít biểu lộ cảm xúc, quyết đoán, trầm tĩnh'),
+           (1, 'Ngộ tính cao', 'Nhân vật có óc hài hước, lém lỉnh, ứng biến nhanh'),
+           (1, 'Thiên phú cao', 'Nhân vật sở hữu tài năng đặc biệt ngay từ đầu'),
+           (1, 'Mang hệ thống', 'Nhân vật sở hữu hệ thống mà người khác không có'),
+           (1, 'Thông minh', 'Nhân vật có trí tuệ cao, suy luận nhanh'),
+           (1, 'Âm hiểm', 'Nhân vật có âm mưu thầm lặng, khó đoán'),
+           (1, 'Âm mưu', 'Nhân vật thường lập kế hoạch, tính toán, thao túng'),
+           (1, 'Báo thù', 'Nhân vật có mục tiêu trả thù, thúc đẩy cốt truyện'),
+           (1, 'Chăm chỉ', 'Nhân vật nỗ lực, siêng năng, không bỏ cuộc'),
+           (1, 'Sống cẩu', 'Nhân vật lươn lẹo, ích kỷ, hành xử trái đạo đức'),
+           (1, 'Hậu cung', 'Nhân vật chính có nhiều người theo đuổi hoặc quan hệ tình cảm phức tạp'),
+           (1, 'Một vợ', 'Nhân vật chính chỉ có một người bạn đời hoặc tình nhân'),
+           (1, 'Bất tử', 'Nhân vật khởi đầu bất tử: chết rồi hồi sinh, thân thể bất hoại, thọ nguyên vô tận'),
+           (1, 'Vô sỉ', 'Nhân vật táo bạo, không biết xấu hổ, liều lĩnh'),
+           (1, 'Ngu ngốc', 'Nhân vật dễ bị lừa, ngây thơ hoặc dốt đặc'),
+           (1, 'Kêu ngạo', 'Nhân vật kiêu căng, tự tin thái quá'),
+           (1, 'Cơm mềm', 'Nhân vật yếu đuối, dễ bị tác động, nhạy cảm'),
+           (1, 'Cá mặn', 'Nhân vật xảo quyệt, thích chơi khăm, tinh quái'),
+           (1, 'Tham lam', 'Nhân vật muốn nhiều thứ, không từ thủ đoạn'),
+           (1, 'Cơ duyên khởi đầu', 'Cơ duyên của nhân vật chính lúc bắt đầu truyện, ảnh hưởng cốt truyện'),
+           (1, 'Khí vận nghịch thiên', 'Nhân vật gặp nghịch cảnh từ lúc đầu, phải vượt qua số phận');
+
+-- =============================
+-- Thế giới
+-- =============================
+INSERT INTO genre (category_id, name, description) VALUES
+           (2, 'Thế giới thực', 'Truyện diễn ra trong bối cảnh thực tế, gần với đời sống thực'),
+           (2, 'Thế giới giả tưởng', 'Truyện diễn ra trong thế giới tưởng tượng, có phép thuật, sinh vật huyền bí'),
+           (2, 'Thế giới game', 'Bối cảnh là trò chơi hoặc thế giới ảo, nhân vật tham gia như trong game'),
+           (2, 'Vô hạn lưu', 'Nhân vật đi qua các không gian, trải nghiệm nhiều thế giới khác nhau, luật lệ thay đổi liên tục'),
+           (2, 'Thế giới khoa học', 'Thế giới dựa trên khoa học, công nghệ, trí tuệ nhân tạo, xã hội phát triển dựa trên khoa học'),
+           (2, 'Thế giới siêu năng', 'Nhân vật sở hữu siêu năng lực hoặc khả năng đặc biệt trong bối cảnh thế giới riêng'),
+           (2, 'Thế giới thần thoại', 'Thế giới dựa trên thần thoại, vị thần, sinh vật huyền thoại'),
+           (2, 'Thế giới đa vũ trụ', 'Bối cảnh đa vũ trụ, nhiều vị diện, các thế lực và thực thể huyền bí tương tác'),
+           (2, 'Thế giới Việt Nam', 'Truyện diễn ra tại Việt Nam, có thể quá khứ hoặc tương lai, gần gũi văn hóa Việt');
+
+-- =============================
+-- Bối cảnh
+-- =============================
+INSERT INTO genre (category_id, name, description) VALUES
+           (3, 'Đô thị', 'Bối cảnh trong thành phố, đời sống hiện đại'),
+           (3, 'Học đường', 'Bối cảnh học sinh, sinh viên, lớp học, câu lạc bộ'),
+           (3, 'Vương quốc', 'Bối cảnh các vương quốc, hoàng tộc, cung đình'),
+           (3, 'Cung đình', 'Các triều đại, quan lại, mưu kế hoàng tộc'),
+           (3, 'Hậu tận thế', 'Xã hội sụp đổ sau thảm họa, nhân vật phải sinh tồn'),
+           (3, 'Dã sử', 'Sử hư cấu dựa trên các sự kiện lịch sử, nhân vật sáng tạo'),
+           (3, 'Đồng nhân', 'Truyện viết dựa trên nhân vật hoặc thế giới đã có từ tác phẩm khác'),
+           (3, 'Quá khứ', 'Bối cảnh trước thời điểm hiện tại'),
+           (3, 'Hiện tại', 'Bối cảnh thời điểm đang diễn ra câu chuyện'),
+           (3, 'Tương lai', 'Bối cảnh thời gian sau hiện tại, xã hội phát triển'),
+           (3, 'Bang phái', 'Các hội, bang phái, võ hiệp, nhóm quyền lực'),
+           (3, 'Tu tiên', 'Bối cảnh tu tiên, luyện đạo, học thuật huyền bí');
+
+-- =============================
+-- Cốt truyện
+-- =============================
+INSERT INTO genre (category_id, name, description) VALUES
+           (4, 'Chiến tranh', 'Các trận chiến, xung đột vũ trang, chiến lược quân sự'),
+           (4, 'Hồi sinh', 'Nhân vật chết đi sống lại, thay đổi số phận'),
+           (4, 'Phiêu lưu', 'Nhân vật khám phá, đi du hành, đối mặt thử thách'),
+           (4, 'Xuyên không', 'Nhân vật đi đến một thế giới khác, quá khứ hoặc tương lai'),
+           (4, 'Xuyên sách', 'Nhân vật đi vào thế giới trong sách hoặc tiểu thuyết'),
+           (4, 'Trò chơi sinh tử', 'Nhân vật tham gia trò chơi nguy hiểm, thử thách sinh tử'),
+           (4, 'Phát triển thế lực', 'Nhân vật hoặc nhóm xây dựng, phát triển quyền lực, thế lực riêng'),
+           (4, 'Phát triển xã hội', 'Cốt truyện thể hiện sự thay đổi hoặc phát triển của xã hội'),
+           (4, 'Âm mưu', 'Cốt truyện xoay quanh âm mưu, đấu trí, thủ đoạn');
+
+-- =============================
+-- Chủ đề
+-- =============================
+INSERT INTO genre (category_id, name, description) VALUES
+           (5, 'Hành động', 'Truyện nhấn mạnh vào các pha chiến đấu, mạo hiểm và nguy hiểm'),
+           (5, 'Phiêu lưu', 'Nhân vật chính đi du hành, khám phá thế giới mới, đối mặt thử thách'),
+           (5, 'Lãng mạn', 'Tập trung vào các mối quan hệ tình cảm, tình yêu giữa các nhân vật'),
+           (5, 'Hài hước', 'Truyện chứa yếu tố gây cười, trào phúng, tình huống dở khóc dở cười'),
+           (5, 'Kinh dị', 'Tạo cảm giác sợ hãi, hồi hộp cho người đọc thông qua ma quái hoặc quái vật'),
+           (5, 'Fantasy', 'Thế giới giả tưởng với phép thuật, sinh vật huyền bí, vương quốc'),
+           (5, 'Khoa học viễn tưởng', 'Dựa trên khoa học, công nghệ tương lai, vũ trụ, robot, du hành thời gian'),
+           (5, 'Cổ trang', 'Bối cảnh lịch sử, cung đình, võ thuật, chính trị thời xưa'),
+           (5, 'Lịch sử', 'Dựa trên sự kiện, nhân vật lịch sử hoặc bối cảnh thời quá khứ'),
+           (5, 'Bí ẩn', 'Nhân vật giải quyết vụ án, tìm kiếm manh mối'),
+           (5, 'Tâm lý', 'Khám phá nội tâm nhân vật, hành vi, xung đột'),
+           (5, 'Học đường', 'Bối cảnh học sinh, sinh viên, lớp học, câu lạc bộ'),
+           (5, 'Gia đình', 'Miêu tả mối quan hệ giữa các thành viên trong gia đình'),
+           (5, 'Đời thường', 'Khai thác cuộc sống hàng ngày, sinh hoạt, công việc'),
+           (5, 'Trinh thám', 'Nhân vật phá án, theo dõi, tìm manh mối và giải quyết vụ án'),
+           (5, 'Harem', 'Nhân vật chính được nhiều đối tượng tình cảm quan tâm hoặc yêu thích'),
+           (5, 'Văn hóa phương Đông', 'Dựa trên phong tục, tập quán, truyền thuyết, triết lý, văn hóa Đông Á'),
+           (5, 'Văn hóa phương Tây', 'Dựa trên văn hóa, truyền thuyết, tôn giáo và xã hội phương Tây'),
+           (5, 'Chiến tranh thế giới', 'Bối cảnh chiến tranh quy mô lớn, toàn cầu hoặc đa quốc gia');
+
+
+
+
+
+

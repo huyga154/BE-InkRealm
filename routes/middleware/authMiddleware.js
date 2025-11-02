@@ -84,3 +84,31 @@ exports.verifyAdmin = async (req, res, next) => {
         res.status(500).json({ message: "Lỗi server khi kiểm tra quyền" });
     }
 };
+
+exports.verifyNovelOwner = async (req, res, next) => {
+    const { novelId } = req.params;
+    const userId = req.user.accountId; // từ verifyToken
+
+    if (!novelId) {
+        return res.status(400).json({ message: "Thiếu novelId" });
+    }
+
+    try {
+        const query = `
+            SELECT 1
+            FROM "novel_info"
+            WHERE "novelId" = $1 AND "accountId" = $2
+            LIMIT 1
+        `;
+        const result = await pool.query(query, [novelId, userId]);
+
+        if (result.rowCount === 0) {
+            return res.status(403).json({ message: "Bạn không phải uploader của truyện này" });
+        }
+
+        next();
+    } catch (err) {
+        console.error("verifyNovelOwner error:", err);
+        res.status(500).json({ message: "Lỗi server" });
+    }
+};

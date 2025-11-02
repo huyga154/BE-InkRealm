@@ -238,4 +238,220 @@ const router = express.Router();
  *                   example: "Lỗi upload cover"
  */
 
+
+/**
+ * @swagger
+ * /uploader/novel/{novelId}/update/genre:
+ *   put:
+ *     summary: Cập nhật genres cho một novel
+ *     tags:
+ *       - Novels
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: novelId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID của novel cần cập nhật genres
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               add:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     genreId:
+ *                       type: integer
+ *                     genreName:
+ *                       type: string
+ *                 description: Danh sách genres cần thêm
+ *               remove:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     genreId:
+ *                       type: integer
+ *                     genreName:
+ *                       type: string
+ *                 description: Danh sách genres cần xóa
+ *             example:
+ *               add:
+ *                 - genreId: 1
+ *                   genreName: "Lạnh lùng"
+ *                 - genreId: 3
+ *                   genreName: "Đô thị"
+ *               remove:
+ *                 - genreId: 5
+ *                   genreName: "Hành động"
+ *     responses:
+ *       200:
+ *         description: Cập nhật thành công, trả về danh sách genres hiện tại của novel
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Update thành công"
+ *                 genres:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       genreId:
+ *                         type: integer
+ *                       genreName:
+ *                         type: string
+ *                       description:
+ *                         type: string
+ *       401:
+ *         description: Chưa đăng nhập hoặc token không hợp lệ
+ *       403:
+ *         description: Người dùng không phải chủ sở hữu novel
+ *       500:
+ *         description: Lỗi server
+ */
+
+
+/**
+ * @swagger
+ * /novel/genre/all:
+ *   get:
+ *     summary: Lấy tất cả genre và category
+ *     tags:
+ *       - Novels
+ *     responses:
+ *       200:
+ *         description: Danh sách thể loại và nhóm theo category
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   categoryId:
+ *                     type: integer
+ *                     example: 1
+ *                   categoryName:
+ *                     type: string
+ *                     example: Fantasy
+ *                   categoryDescription:
+ *                     type: string
+ *                     example: Thể loại giả tưởng
+ *                   genres:
+ *                     type: array
+ *                     items:
+ *                       type: object
+ *                       properties:
+ *                         genreId:
+ *                           type: integer
+ *                           example: 1
+ *                         genreName:
+ *                           type: string
+ *                           example: High Fantasy
+ *                         genreDescription:
+ *                           type: string
+ *                           example: Giả tưởng cao
+ *       500:
+ *         description: Lỗi server
+ */
+
+
+/**
+ * @swagger
+ * /novel/genre/search:
+ *   post:
+ *     summary: Tìm truyện theo nhiều genre (không trả category)
+ *     tags:
+ *       - Novels
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               genreList:
+ *                 type: array
+ *                 items:
+ *                   type: integer
+ *                 example: [1, 3, 5]
+ *     responses:
+ *       200:
+ *         description: Danh sách truyện thuộc các genre
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   novelId:
+ *                     type: integer
+ *                   novelTitle:
+ *                     type: string
+ *                   novelDescription:
+ *                     type: string
+ *                   author:
+ *                     type: string
+ *                   novel_img_url:
+ *                     type: string
+ */
+
+
+
+/**
+ * @swagger
+ * /novel/{novelId}/genre:
+ *   get:
+ *     summary: Lấy tất cả genre của một truyện theo novelId, nhóm theo category
+ *     tags:
+ *       - Novels
+ *     parameters:
+ *       - in: path
+ *         name: novelId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID của truyện
+ *     responses:
+ *       200:
+ *         description: Danh sách genre nhóm theo category
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   categoryId:
+ *                     type: integer
+ *                   categoryName:
+ *                     type: string
+ *                   categoryDescription:
+ *                     type: string
+ *                   genres:
+ *                     type: array
+ *                     items:
+ *                       type: object
+ *                       properties:
+ *                         genreId:
+ *                           type: integer
+ *                         genreName:
+ *                           type: string
+ *                         genreDescription:
+ *                           type: string
+ */
+
+
 module.exports = router;
