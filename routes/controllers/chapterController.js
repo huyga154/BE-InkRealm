@@ -11,7 +11,7 @@ exports.getChapterList = async (req, res) => {
         }
 
         const result = await pool.query(
-            `SELECT "chapterId", "chapterTitle", "chapterIndex", "createDate", "updateDate", "chapterStatusId"
+            `SELECT "chapterId", "chapterTitle", "chapterIndex", "createDate", "updateDate", "chapterStatusId","price"
              FROM "chapter"
              WHERE "novelId" = $1
              ORDER BY "chapterIndex" ASC`,

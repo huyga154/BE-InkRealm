@@ -58,6 +58,8 @@ var router = express.Router();
  *                       updateDate:
  *                         type: string
  *                         format: date-time
+ *                       price:
+ *                         type: integer
  *       400:
  *         description: Thiếu hoặc sai novelId
  *       500:
