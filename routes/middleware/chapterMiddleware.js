@@ -38,7 +38,7 @@ exports.verifyUploader = async (req, res, next) => {
 
 exports.verifyNovelUploader = async (req, res, next) => {
     try {
-        const { novelId } = req.params; // có thể lấy từ req.body nếu bạn gửi qua body
+        const { novelId } = req.body; // có thể lấy từ req.body nếu bạn gửi qua body
         const accountId = req.user?.accountId;
 
         if (!novelId || !accountId) {
