@@ -9,12 +9,12 @@ const {
     putUpdateChapterText,
     setChapterPrice, buyChapter, getChaptersByStatusId, getChapterTextById
 } = require("../../controllers/chapterController");
-const { verifyUploader, resetStatusToDraft}
+const { verifyUploader, resetStatusToDraft, verifyNovelUploader}
     = require("../../middleware/chapterMiddleware");
 const {updateNovelGenre} = require("../../controllers/novelGenreController");
 
 router.get("/chapter/list/:novelId", getChapterList);
-router.post("/chapter/add",verifyToken,verifyUploader, postAddNewChapter);
+router.post("/chapter/add",verifyToken,verifyNovelUploader, postAddNewChapter);
 router.get("/chapter/text", verifyToken, getChapterText);
 router.get("/chapter/detail", getChapterDetail);
 

@@ -36,6 +36,40 @@ exports.verifyUploader = async (req, res, next) => {
     }
 };
 
+exports.verifyNovelUploader = async (req, res, next) => {
+    try {
+        const { novelId } = req.params; // có thể lấy từ req.body nếu bạn gửi qua body
+        const accountId = req.user?.accountId;
+
+        if (!novelId || !accountId) {
+            return res.status(400).json({ message: "Thiếu thông tin novelId hoặc accountId" });
+        }
+
+        // Lấy accountId của uploader từ bảng novel_info
+        const result = await pool.query(
+            `SELECT "accountId" FROM "novel_info" WHERE "novelId" = $1`,
+            [novelId]
+        );
+
+        if (result.rowCount === 0) {
+            return res.status(404).json({ message: "Không tìm thấy truyện" });
+        }
+
+        const { accountId: uploaderId } = result.rows[0];
+
+        // Nếu người đăng nhập không phải là người đăng truyện → chặn
+        if (uploaderId !== accountId) {
+            return res.status(403).json({ message: "Bạn không có quyền chỉnh sửa truyện này" });
+        }
+
+        next();
+
+    } catch (err) {
+        console.error("verifyNovelUploader error:", err);
+        res.status(500).json({ message: "Lỗi server khi kiểm tra quyền" });
+    }
+};
+
 exports.resetStatusToDraft = async (req, res, next) => {
     try {
         const { chapterId } = req.params;
