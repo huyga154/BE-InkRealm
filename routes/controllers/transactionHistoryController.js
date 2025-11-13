@@ -1,47 +1,40 @@
-// const getTransactionHistoryQuery = (filters) => {
-//     const { accountId, chapterId, novelId, startDate, endDate } = filters;
-//     let conditions = [];
-//     let values = [];
-//     let idx = 1;
-//
-//     if (accountId) {
-//         conditions.push(`"transaction_history"."accountId" = $${idx++}`);
-//         values.push(accountId);
-//     }
-//     if (chapterId) {
-//         conditions.push(`"chapter_purchase"."chapterId" = $${idx++}`);
-//         values.push(chapterId);
-//     }
-//     if (novelId) {
-//         conditions.push(`"novel_purchase"."novelId" = $${idx++}`);
-//         values.push(novelId);
-//     }
-//     if (startDate) {
-//         conditions.push(`"transaction_history"."dats" >= $${idx++}`);
-//         values.push(startDate);
-//     }
-//     if (endDate) {
-//         conditions.push(`"transaction_history"."dats" <= $${idx++}`);
-//         values.push(endDate);
-//     }
-//
-//     const whereClause = conditions.length ? "WHERE " + conditions.join(" AND ") : "";
-//
-//     const query = `
-//         SELECT
-//             "transaction_history".*,
-//             "account"."username",
-//             "account"."fullName",
-//             "chapter_purchase"."chapterId" AS purchased_chapter_id,
-//             "novel_purchase"."novelId" AS purchased_novel_id
-//         FROM "transaction_history"
-//         LEFT JOIN "account" ON "account"."accountId" = "transaction_history"."accountId"
-//         LEFT JOIN "chapter_purchase" ON "chapter_purchase"."transactionId" = "transaction_history"."transactionId"
-//         LEFT JOIN "novel_purchase" ON "novel_purchase"."transactionId" = "transaction_history"."transactionId"
-//         ${whereClause}
-//         ORDER BY "transaction_history"."dats" DESC
-//     `;
-//     return { query, values };
-// };
+const pool = require("../config/db");
+require("dotenv").config();
 
-// ádasdassd
+exports.getTransactionHistory = async (req, res) => {
+    try {
+        const { transactionId } = req.query;
+        const accountId = req.user?.accountId;
+
+        if (!accountId) {
+            return res.status(401).json({ message: 'Không tìm thấy accountId trong token' });
+        }
+
+        const params = [accountId];
+        let query = `
+            SELECT "transactionId", "dats", "transaction_data", "coin_change"
+            FROM "transaction_history"
+            WHERE "accountId" = $1
+        `;
+
+        if (transactionId) {
+            params.push(Number(transactionId));
+            query += ` AND "transactionId" < $2`;
+        }
+
+        // Keyset pagination + index hỗ trợ
+        query += ` ORDER BY "transactionId" DESC LIMIT 10`;
+
+        const { rows } = await pool.query(query, params);
+
+        res.json({
+            message: 'Lấy lịch sử giao dịch thành công',
+            transactions: rows,
+            hasMore: rows.length === 10,
+        });
+    } catch (err) {
+        console.error('getTransactionHistory error:', err);
+        res.status(500).json({ message: 'Lỗi server khi lấy lịch sử giao dịch' });
+    }
+};
+

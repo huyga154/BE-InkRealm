@@ -239,3 +239,6 @@ SELECT
 FROM novel_genre ng
          JOIN "novel_info" ni ON ng."novelId" = ni."novelId"
          JOIN "genre" g ON ng."genreId" = g."id";
+
+CREATE INDEX IF NOT EXISTS idx_transaction_accountId_transactionId
+    ON "transaction_history" ("accountId", "transactionId" DESC);
